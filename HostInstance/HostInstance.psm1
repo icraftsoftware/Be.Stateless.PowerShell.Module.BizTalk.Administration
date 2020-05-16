@@ -183,9 +183,11 @@ function Get-BizTalkHostInstance {
 .EXAMPLE
     PS> New-BizTalkHost -Name 'Transmit Host' -Trusted:$false
 .LINK
-    https://docs.microsoft.com/en-us/biztalk/core/technical-reference/mapping-and-installing-host-instances-using-wmi, Mapping and Installing Host Instances Using WMI
+    https://docs.microsoft.com/en-us/biztalk/core/technical-reference/mapping-and-installing-host-instances-using-wmi
 .LINK
     https://sandroaspbiztalkblog.wordpress.com/2013/09/05/powershell-to-configure-biztalk-server-host-and-host-instances-according-to-some-of-the-best-practices/
+.LINK
+    https://www.powershellgallery.com/packages/BizTalkServer
 .NOTES
     © 2020 be.stateless.
 #>
@@ -279,6 +281,8 @@ function New-BizTalkHostInstance {
     'BizTalkBox'.
 .LINK
     https://docs.microsoft.com/en-us/biztalk/core/technical-reference/uninstalling-and-un-mapping-a-host-instance-using-wmi
+.LINK
+    https://www.powershellgallery.com/packages/BizTalkServer
 .NOTES
     © 2020 be.stateless.
 #>

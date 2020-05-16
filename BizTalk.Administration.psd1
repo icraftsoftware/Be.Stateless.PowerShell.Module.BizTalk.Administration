@@ -18,7 +18,7 @@
 
 @{
     RootModule            = 'BizTalk.Administration.psm1'
-    ModuleVersion         = '1.0.0.0'
+    ModuleVersion         = '1.0.0.1'
     GUID                  = 'de802b43-c7a6-4580-a34b-ac805bbf813e'
     Author                = 'François Chabot'
     CompanyName           = 'be.stateless'
@@ -28,6 +28,7 @@
     PowerShellVersion     = '5.0'
     NestedModules         = @(
         'Application\Application.psm1',
+        'Group\Group.psm1',
         'Handler\Handler.psm1',
         'Host\Host.psm1',
         'HostInstance\HostInstance.psm1',
@@ -51,6 +52,8 @@
         'Remove-BizTalkApplication',
         'Stop-BizTalkApplication',
         'Test-BizTalkApplication',
+        # Group.psm1
+        'Get-BizTalGroupSettings',
         # Handler.psm1
         'Get-BizTalkHandler',
         'New-BizTalkHandler',
@@ -79,5 +82,5 @@
     )
     VariablesToExport     = @()
 
-    PrivateData           = @{ MgmtDbServer = $null ; MgmtDbName = $null }
+    PrivateData           = @{ }
 }

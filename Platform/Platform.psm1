@@ -29,12 +29,12 @@ function Get-BizTalkCatalog {
         [Parameter(Position = 0, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-RegisteredMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
 
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-RegisteredMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
     )
     try {
         $catalog = New-Object BtsCatalogExplorer
@@ -56,12 +56,12 @@ function Get-BizTalkController {
         [Parameter(Position = 0, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-RegisteredMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
 
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-RegisteredMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
     )
     try {
         $controller = New-Object BizTalkOperations -ArgumentList $ManagementDatabaseServer, $ManagementDatabaseName
@@ -74,4 +74,4 @@ function Get-BizTalkController {
     }
 }
 
-. $PSScriptRoot\..\Registry.ps1
+Import-Module BizTalk.Administration\Group

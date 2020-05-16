@@ -56,12 +56,12 @@ function Get-BizTalkApplication {
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-RegisteredMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
 
         [Parameter(Position = 2, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-RegisteredMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
     )
     Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {
         if ([string]::IsNullOrWhiteSpace($Name)) {
@@ -127,12 +127,12 @@ function Stop-BizTalkApplication {
         [Parameter(Position = 3, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-RegisteredMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
 
         [Parameter(Position = 4, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-RegisteredMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
     )
     Use-Object ($controller = Get-BizTalkController $ManagementDatabaseServer $ManagementDatabaseName) {
         if ($TerminateServiceInstances) {
@@ -200,12 +200,12 @@ function Test-BizTalkApplication {
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-RegisteredMgmtDbServer),
+        $ManagementDatabaseServer = (Group\Get-BizTalGroupMgmtDbServer),
 
         [Parameter(Position = 2, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-RegisteredMgmtDbName)
+        $ManagementDatabaseName = (Group\Get-BizTalGroupMgmtDbName)
     )
     Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {
         $null -ne $catalog.Applications[$Name]
@@ -214,4 +214,4 @@ function Test-BizTalkApplication {
 
 Add-ToolAlias -Path ($env:BTSINSTALLPATH) -Tool BTSTask
 
-. $PSScriptRoot\..\Registry.ps1
+Import-Module BizTalk.Administration\Group

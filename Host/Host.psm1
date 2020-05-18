@@ -185,7 +185,7 @@ function New-BizTalkHost {
             }
         } catch {
             Write-Error "`t Creating '$Name' host has failed."
-            throw;
+            throw
         }
     }
 }
@@ -219,7 +219,7 @@ function Remove-BizTalkHost {
                 Write-Host "`t '$Name' host has been deleted."
             } catch {
                 Write-Error "`t Deleting '$Name' host has failed."
-                throw;
+                throw
             }
         }
     } else {
@@ -235,7 +235,7 @@ function Remove-BizTalkHost {
 .PARAMETER Name
     The name of the BizTalk Server host.
 .OUTPUTS
-    True if the BizTalk Server host exists; False otherwise.
+    $true if the BizTalk Server host exists; $false otherwise.
 .EXAMPLE
     PS> Test-BizTalkHost -Name 'Transmit Host'
 .NOTES
@@ -340,7 +340,7 @@ function Update-BizTalkHost {
                 Write-Verbose "`t $PerformedAction."
             } catch {
                 Write-Error "`t $ActionToPerform has failed."
-                throw;
+                throw
             }
         }
     }

@@ -132,7 +132,7 @@ function New-BizTalkHandler {
     if (Test-BizTalkHandler -Adapter $Adapter -Host $Host -Direction $Direction) {
         Write-Host "`t $Direction $Adapter handler for '$Host' host already exists."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Creating $Direction $Adapter handler for '$Host' host")) {
-        Write-Verbose "`t Creating $Direction $Adapter handler for '$Host' host...";
+        Write-Verbose "`t Creating $Direction $Adapter handler for '$Host' host..."
         $className = Get-HandlerCimClassName -Direction $Direction
         $properties = @{ AdapterName = $Adapter ; HostName = $Host }
         if ($Direction -eq 'Send' -and $Default.IsPresent) { $properties.IsDefault = [bool]$Default }
@@ -176,7 +176,7 @@ function Remove-BizTalkHandler {
     if (-not (Test-BizTalkHandler -Adapter $Adapter -Host $Host -Direction $Direction)) {
         Write-Host "`t $Direction $Adapter handler for '$Host' host does not exist."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Removing $Direction $Adapter handler for '$Host' host")) {
-        Write-Verbose "`t Removing $Direction $Adapter handler for '$Host' host...";
+        Write-Verbose "`t Removing $Direction $Adapter handler for '$Host' host..."
         $className = Get-HandlerCimClassName -Direction $Direction
         # TODO fail if try to remove default send handler
         $instance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter "AdapterName='$Adapter' and HostName='$Host'"
@@ -197,7 +197,7 @@ function Remove-BizTalkHandler {
 .PARAMETER Direction
     The diretion of the Microsoft BizTalk Server handler whose existence is to be tested, either Receive or Send.
 .OUTPUTS
-    True if the BizTalk Server handler exists; False otherwise.
+    $true if the BizTalk Server handler exists; $false otherwise.
 .EXAMPLE
     PS> Test-BizTalkHandler -Adapter FILE -Host BizTalkServerApplication -Direction Send
 .NOTES

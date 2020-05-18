@@ -313,7 +313,7 @@ function Remove-BizTalkHostInstance {
                 Write-Host "`t '$Name' host has been deleted."
             } catch {
                 Write-Error "`t Deleting '$Name' host has failed."
-                throw;
+                throw
             }
         }
     } else {

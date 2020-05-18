@@ -27,6 +27,7 @@
     ProcessorArchitecture = 'None'
     PowerShellVersion     = '5.0'
     NestedModules         = @(
+        'Adapter\Adapter.psm1',
         'Application\Application.psm1',
         'Group\Group.psm1',
         'Handler\Handler.psm1',
@@ -46,6 +47,11 @@
         # RootModule
         'Assert-BizTalkServer',
         'Test-BizTalkServer',
+        # Adapter.psm1
+        'New-BizTalkAdapter',
+        'Get-BizTalkAdapter',
+        'Remove-BizTalkAdapter',
+        'Test-BizTalkAdapter',
         # Application.psm1
         'Get-BizTalkApplication',
         'New-BizTalkApplication',

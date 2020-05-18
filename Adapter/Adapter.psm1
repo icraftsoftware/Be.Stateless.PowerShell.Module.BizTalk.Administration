@@ -20,68 +20,6 @@ Set-StrictMode -Version Latest
 
 <#
 .SYNOPSIS
-    Register an adapter in Microsoft BizTalk Server.
-.DESCRIPTION
-    Register an adapter in Microsoft BizTalk Server. The adapter to be registerd should be locally installed in order
-    for its registration to succeed unless the MgmtCLSID is forced.
-.PARAMETER Name
-    The name of the Microsoft BizTalk Server adapter to register.
-.PARAMETER MgmtCLSID
-    The MgmtCLSID of the Microsoft BizTalk Server adapter to register. If the MgmtCLSID argument is omitted, it
-    will lookup in the local machine's COM registry.
-.PARAMETER Comment
-    A descriptive comment of the Microsoft BizTalk Server adapter to register.
-.EXAMPLE
-    PS> New-BizTalkAdapter -Name 'WCF-SQL'
-.EXAMPLE
-    PS> New-BizTalkAdapter -Name 'WCF-SQL' -MgmtCLSID '{59B35D03-6A06-4734-A249-EF561254ECF7}'
-.EXAMPLE
-    PS> New-BizTalkAdapter -Name 'WCF-SQL' -Comment 'Windows Communication Foundation (WCF) in-process adapter for SQL Server.'
-.NOTES
-    © 2020 be.stateless.
-#>
-function New-BizTalkAdapter {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    [OutputType([void])]
-    param(
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $Name,
-
-        [Parameter(Mandatory = $false)]
-        [AllowEmptyString()]
-        [AllowNull()]
-        [string]
-        $MgmtCLSID,
-
-        [Parameter(Mandatory = $false)]
-        [AllowEmptyString()]
-        [AllowNull()]
-        [string]
-        $Comment
-    )
-    if (Test-BizTalkAdapter -Name $Name -Source BizTalk) {
-        Write-Host "`t $Name adapter has already been registered in Microsoft BizTalk Server."
-    } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Registering $Name adapter")) {
-        Write-Verbose "`t Registering $Name adapter in Microsoft BizTalk Server..."
-        if ([string]::IsNullOrWhiteSpace($MgmtCLSID)) { $MgmtCLSID = Get-BizTalkAdapter -Name $Name -Source Registry | Select-Object -ExpandProperty MgmtCLSID }
-        if ([string]::IsNullOrWhiteSpace($MgmtCLSID)) {
-            throw "Cannot register $Name adapter in Microsoft BizTalk Server because its MgmtCLSID is unknown or cannot be found. The $Name adapter might not be locally installed on $($env:COMPUTERNAME)."
-        }
-        $properties = @{
-            Name      = $Name
-            MgmtCLSID = $MgmtCLSID
-        }
-        if (-not [string]::IsNullOrWhiteSpace($Comment)) { $properties.Comment = $Comment }
-        $properties
-        New-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Property $properties | Out-Null
-        Write-Verbose "`t $Name adapter in Microsoft BizTalk Server has been registered."
-    }
-}
-
-<#
-.SYNOPSIS
     Gets information about the Microsoft BizTalk Server adapters.
 .DESCRIPTION
     Gets information about the Microsoft BizTalk Server adapters available in Microsoft BizTalk Server or the local
@@ -125,27 +63,6 @@ function Get-BizTalkAdapter {
         $Source = 'BizTalk'
     )
 
-    function Get-BizTalkAdapterRegistryKey {
-        [CmdletBinding()]
-        [OutputType([Microsoft.Win32.RegistryKey[]])]
-        param()
-        Use-Object ($hklm = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry32)) {
-            Use-Object ($clsidKey = $hklm.OpenSubKey('SOFTWARE\Classes\CLSID')) {
-                $clsidKey.GetSubKeyNames() | ForEach-Object -Process {
-                    Use-Object ($clsid = $clsidKey.OpenSubKey($_)) {
-                        Use-Object ($adapterCategoryKey = $clsid.OpenSubKey('Implemented Categories\{7F46FC3E-3C2C-405B-A47F-8D17942BA8F9}')) {
-                            if ($null -ne $adapterCategoryKey) {
-                                Use-Object ($adapterKey = $clsid.OpenSubKey('BizTalk')) {
-                                    $adapterKey
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     function ConvertTo-BizTalkAdapterObject {
         [CmdletBinding()]
         [OutputType([PSCustomObject])]
@@ -176,9 +93,6 @@ function Get-BizTalkAdapter {
             [PSCustomObject]
             $RegistryAdapter
         )
-        # if ($BizTalkAdapter.Constraints -ne $RegistryAdapter.Constraints) {
-        #     throw "BizTalk '$($BizTalkAdapter.Name)' adapter and its corresponding Registry have different 'Constraints' property values ($($BizTalkAdapter.Constraints), $($RegistryAdapter.Constraints))."
-        # }
         $adapter = [PSCustomObject]@{
             Source      = @('BizTalk', 'Registry')
             MgmtCLSID   = $BizTalkAdapter.MgmtCLSID
@@ -204,13 +118,9 @@ function Get-BizTalkAdapter {
             # speed up registry lookup by 1st looking MgmtCLSID in BizTalk
             $mgmtCLSID = Get-BizTalkAdapter -Name $Name -Source BizTalk | Select-Object -ExpandProperty MgmtCLSID
             if ($null -ne $mgmtCLSID) {
-                Use-Object ($hklm = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry32)) {
-                    Use-Object ($adapterKey = $hklm.OpenSubKey("SOFTWARE\Classes\CLSID\$mgmtCLSID\BizTalk")) {
-                        if ($null -ne $adapterKey) {
-                            ConvertTo-BizTalkAdapterObject -Key $adapterKey
-                        }
-                    }
-                }
+                Get-BizTalkAdapterRegistryKey -MgmtCLSID $mgmtCLSID |
+                    Where-Object -FilterScript { $null -ne $_ } |
+                    ForEach-Object -Process { ConvertTo-BizTalkAdapterObject -Key $_ }
             } else {
                 Get-BizTalkAdapterRegistryKey |
                     Where-Object -FilterScript { $_.GetValue('TransportType') -eq $Name } |
@@ -220,6 +130,7 @@ function Get-BizTalkAdapter {
     } else {
         $btsAdapters = @(Get-BizTalkAdapter -Name $Name -Source BizTalk)
         $btsMgmtClsIds = $btsAdapters | ForEach-Object MgmtCLSID
+
         $comAdapters = @(Get-BizTalkAdapter -Name $Name -Source Registry)
         $comMgmtClsIds = $comAdapters | ForEach-Object MgmtCLSID
 
@@ -233,6 +144,71 @@ function Get-BizTalkAdapter {
 
         $comOnlyMgmtClsIds = $comMgmtClsIds | Where-Object -FilterScript { $btsMgmtClsIds -notcontains $_ }
         $comAdapters | Where-Object -FilterScript { $_.MgmtCLSID -in $comOnlyMgmtClsIds }
+    }
+}
+
+<#
+.SYNOPSIS
+    Register an adapter in Microsoft BizTalk Server.
+.DESCRIPTION
+    Register an adapter in Microsoft BizTalk Server. The adapter to be registerd should be locally installed in order
+    for its registration to succeed unless the MgmtCLSID is forced.
+.PARAMETER Name
+    The name of the Microsoft BizTalk Server adapter to register.
+.PARAMETER MgmtCLSID
+    The MgmtCLSID of the Microsoft BizTalk Server adapter to register. If the MgmtCLSID argument is omitted, it
+    will be looked up in the local machine's COM registry.
+.PARAMETER Comment
+    A descriptive comment of the Microsoft BizTalk Server adapter to register.
+.EXAMPLE
+    PS> New-BizTalkAdapter -Name 'WCF-SQL'
+.EXAMPLE
+    PS> New-BizTalkAdapter -Name 'WCF-SQL' -MgmtCLSID '{59B35D03-6A06-4734-A249-EF561254ECF7}'
+.EXAMPLE
+    PS> New-BizTalkAdapter -Name 'WCF-SQL' -Comment 'Windows Communication Foundation (WCF) in-process adapter for SQL Server.'
+.NOTES
+    © 2020 be.stateless.
+#>
+function New-BizTalkAdapter {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    [OutputType([void])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Name,
+
+        [Parameter(Mandatory = $false)]
+        [AllowEmptyString()]
+        [AllowNull()]
+        [string]
+        $MgmtCLSID,
+
+        [Parameter(Mandatory = $false)]
+        [AllowEmptyString()]
+        [AllowNull()]
+        [string]
+        $Comment
+    )
+    if (Test-BizTalkAdapter -Name $Name -Source BizTalk) {
+        Write-Information "`t $Name adapter has already been registered in Microsoft BizTalk Server."
+    } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Registering $Name adapter")) {
+        Write-Verbose "`t Registering $Name adapter in Microsoft BizTalk Server..."
+        if ([string]::IsNullOrWhiteSpace($MgmtCLSID)) { $MgmtCLSID = Get-BizTalkAdapter -Name $Name -Source Registry | Select-Object -ExpandProperty MgmtCLSID }
+        if ([string]::IsNullOrWhiteSpace($MgmtCLSID)) {
+            throw "$Name Adapter's MgmtCLSID could not be resolved on the local machine. The $Name adapter might not be installed on $($env:COMPUTERNAME)."
+        }
+        if ($null -eq (Get-BizTalkAdapterRegistryKey -MgmtCLSID $mgmtCLSID)) {
+            throw "Adapter's MgmtCLSID $mgmtCLSID does not exist on the local machine. The $Name adapter might not be installed on $($env:COMPUTERNAME)."
+        }
+        $properties = @{
+            Name      = $Name
+            MgmtCLSID = $MgmtCLSID
+        }
+        if (-not [string]::IsNullOrWhiteSpace($Comment)) { $properties.Comment = $Comment }
+        $properties
+        New-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Property $properties | Out-Null
+        Write-Verbose "`t $Name adapter in Microsoft BizTalk Server has been registered."
     }
 }
 
@@ -258,7 +234,7 @@ function Remove-BizTalkAdapter {
         $Name
     )
     if (-not(Test-BizTalkAdapter -Name $Name -Source BizTalk)) {
-        Write-Host "`t $Name adapter has not been registered in Microsoft BizTalk Server."
+        Write-Information "`t $Name adapter has not been registered in Microsoft BizTalk Server."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Unregistering $Name adapter")) {
         Write-Verbose "`t Unregistering $Name adapter from Microsoft BizTalk Server..."
         $filter = if (![string]::IsNullOrWhiteSpace($Name)) { "Name='$Name'" }
@@ -297,8 +273,7 @@ function Test-BizTalkAdapter {
     [OutputType([bool])]
     param(
         [Parameter(Position = 0, Mandatory = $true)]
-        [AllowEmptyString()]
-        [AllowNull()]
+        [ValidateNotNullOrEmpty()]
         [string]
         $Name,
 
@@ -313,3 +288,33 @@ function Test-BizTalkAdapter {
         [bool](Get-BizTalkAdapter -Name $Name -Source $Source)
     }
 }
+
+function Get-BizTalkAdapterRegistryKey {
+    [CmdletBinding()]
+    [OutputType([Microsoft.Win32.RegistryKey[]])]
+    param(
+        [Parameter(Position = 0, Mandatory = $false)]
+        [AllowEmptyString()]
+        [AllowNull()]
+        [string]
+        $MgmtCLSID
+    )
+    Use-Object ($hklm = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry32)) {
+        Use-Object ($clsidKey = $hklm.OpenSubKey('SOFTWARE\Classes\CLSID')) {
+            $(if ([string]::IsNullOrWhiteSpace($MgmtCLSID)) { $clsidKey.GetSubKeyNames() } else { @($MgmtCLSID) }) | ForEach-Object -Process {
+                Use-Object ($clsid = $clsidKey.OpenSubKey($_)) {
+                    if ($null -ne $clsid) {
+                        Use-Object ($adapterCategoryKey = $clsid.OpenSubKey('Implemented Categories\{7F46FC3E-3C2C-405B-A47F-8D17942BA8F9}')) {
+                            if ($null -ne $adapterCategoryKey) {
+                                Use-Object ($adapterKey = $clsid.OpenSubKey('BizTalk')) {
+                                    $adapterKey
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

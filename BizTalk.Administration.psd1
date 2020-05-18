@@ -48,8 +48,8 @@
         'Assert-BizTalkServer',
         'Test-BizTalkServer',
         # Adapter.psm1
-        'New-BizTalkAdapter',
         'Get-BizTalkAdapter',
+        'New-BizTalkAdapter',
         'Remove-BizTalkAdapter',
         'Test-BizTalkAdapter',
         # Application.psm1

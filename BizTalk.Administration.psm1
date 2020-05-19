@@ -63,7 +63,7 @@ function Test-BizTalkServer {
  #>
 
 # Have BizTalk Tracking tools available on path, noticeably bm.exe
-$p = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\BizTalk Server\3.0\' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty InstallPath
-if ($null -ne $p) {
-    $env:Path += ";$($p)Tracking"
+$path = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\BizTalk Server\3.0\' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty InstallPath
+if ($null -ne $path) {
+    $env:Path += ";$(Join-Path $path Tracking)"
 }

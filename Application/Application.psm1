@@ -74,7 +74,7 @@ function Get-BizTalkApplication {
 
 function New-BizTalkApplication {
     [CmdletBinding()]
-    [OutputType([boolean])]
+    [OutputType([void])]
     param(
         [Parameter(Position = 0, Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -91,7 +91,7 @@ function New-BizTalkApplication {
 
 function Remove-BizTalkApplication {
     [CmdletBinding()]
-    [OutputType([boolean])]
+    [OutputType([void])]
     param(
         [Parameter(Position = 0, Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -101,9 +101,50 @@ function Remove-BizTalkApplication {
     Invoke-Tool -Command { BTSTask RemoveApp -ApplicationName:"$Name" }
 }
 
+function Start-BizTalkApplication {
+    [CmdletBinding()]
+    [OutputType([void])]
+    param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Name,
+
+        [Parameter(Position = 1, Mandatory = $false)]
+        [ApplicationStartOption]
+        $StartOptions = (
+            [ApplicationStartOption]::StartAllOrchestrations -bor
+            [ApplicationStartOption]::StartAllSendPorts -bor
+            [ApplicationStartOption]::StartAllSendPortGroups -bor
+            [ApplicationStartOption]::EnableAllReceiveLocations -bor
+            [ApplicationStartOption]::DeployAllPolicies
+        ),
+
+        [Parameter(Position = 3, Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
+
+        [Parameter(Position = 4, Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
+    )
+    Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {
+        $application = $catalog.Applications[$Name]
+        try {
+            $application.Start($StartOptions)
+            $catalog.SaveChanges()
+        } catch {
+            $catalog.DiscardChanges()
+            throw
+        }
+    }
+}
+
 function Stop-BizTalkApplication {
     [CmdletBinding()]
-    [OutputType([boolean])]
+    [OutputType([void])]
     param(
         [Parameter(Position = 0, Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -190,7 +231,7 @@ function Stop-BizTalkApplication {
 #>
 function Test-BizTalkApplication {
     [CmdletBinding()]
-    [OutputType([boolean])]
+    [OutputType([bool])]
     param(
         [Parameter(Position = 0, Mandatory = $true)]
         [ValidateNotNullOrEmpty()]

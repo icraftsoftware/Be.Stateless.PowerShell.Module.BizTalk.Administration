@@ -56,6 +56,7 @@
         'Get-BizTalkApplication',
         'New-BizTalkApplication',
         'Remove-BizTalkApplication',
+        'Start-BizTalkApplication',
         'Stop-BizTalkApplication',
         'Test-BizTalkApplication',
         # Group.psm1

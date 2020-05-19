@@ -16,18 +16,17 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Application -Force
+Import-Module -Name $PSScriptRoot\..\Handler -Force
 
-Describe 'Remove-BizTalkApplication' {
-    InModuleScope Application {
+Describe 'Test-BizTalkHandler' {
+    InModuleScope Handler {
 
-        Context 'Removing BizTalk Server applications' {
-            It 'Throws when no application with the given name exists.' {
-                { Remove-BizTalkApplication -Name 'Dummy.BizTalk.Application' } | Should -Throw -ExpectedMessage 'Command { BTSTask RemoveApp -ApplicationName:"$Name" }'
+        Context 'Testing the existence of BizTalk Server Handlers' {
+            It 'Returns $true for a given handler.' {
+                Test-BizTalkHandler -Adapter FILE -Host BizTalkServerApplication -Direction Send | Should -BeTrue
             }
-            It 'Removes an application by name when it exists.' {
-                New-BizTalkApplication -Name 'Dummy.BizTalk.Application'
-                { Remove-BizTalkApplication -Name 'Dummy.BizTalk.Application' } | Should -Not -Throw
+            It 'Returns $true for a given handler.' {
+                Test-BizTalkHandler -Adapter FTPS -Host BizTalkServerApplication -Direction Send | Should -BeFalse
             }
         }
 

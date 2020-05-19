@@ -130,14 +130,14 @@ function New-BizTalkHandler {
         $Default
     )
     if (Test-BizTalkHandler -Adapter $Adapter -Host $Host -Direction $Direction) {
-        Write-Host "`t $Direction $Adapter handler for '$Host' host already exists."
+        Write-Information "`t $Direction $Adapter handler for '$Host' host already exists."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Creating $Direction $Adapter handler for '$Host' host")) {
         Write-Verbose "`t Creating $Direction $Adapter handler for '$Host' host..."
         $className = Get-HandlerCimClassName -Direction $Direction
         $properties = @{ AdapterName = $Adapter ; HostName = $Host }
         if ($Direction -eq 'Send' -and $Default.IsPresent) { $properties.IsDefault = [bool]$Default }
         New-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName $className -Property $properties | Out-Null
-        Write-Host "`t $Direction $Adapter handler for '$Host' host has been created."
+        Write-Information "`t $Direction $Adapter handler for '$Host' host has been created."
     }
 }
 
@@ -162,10 +162,12 @@ function Remove-BizTalkHandler {
     [OutputType([void])]
     param(
         [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [string]
         $Adapter,
 
         [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [string]
         $Host,
 
@@ -174,14 +176,14 @@ function Remove-BizTalkHandler {
         $Direction
     )
     if (-not (Test-BizTalkHandler -Adapter $Adapter -Host $Host -Direction $Direction)) {
-        Write-Host "`t $Direction $Adapter handler for '$Host' host does not exist."
+        Write-Information "`t $Direction $Adapter handler for '$Host' host does not exist."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Removing $Direction $Adapter handler for '$Host' host")) {
         Write-Verbose "`t Removing $Direction $Adapter handler for '$Host' host..."
         $className = Get-HandlerCimClassName -Direction $Direction
         # TODO fail if try to remove default send handler
         $instance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter "AdapterName='$Adapter' and HostName='$Host'"
         Remove-CimInstance -InputObject $instance
-        Write-Host "`t $Direction $Adapter handler for '$Host' host has been removed."
+        Write-Information "`t $Direction $Adapter handler for '$Host' host has been removed."
     }
 }
 
@@ -208,10 +210,12 @@ function Test-BizTalkHandler {
     [OutputType([bool])]
     param(
         [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [string]
         $Adapter,
 
         [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [string]
         $Host,
 
@@ -231,6 +235,5 @@ function Get-HandlerCimClassName {
         [Direction]
         $Direction
     )
-    # MSBTS_SendHandler2 is to be used since BTS 2006 onwards, http://blogdoc.biztalk247.com/article.aspx?page=bb8f4d72-f38d-4eac-87c0-407e9c58c50b
     if ($direction -eq [Direction]::Receive) { 'MSBTS_ReceiveHandler' } else { 'MSBTS_SendHandler2' }
 }

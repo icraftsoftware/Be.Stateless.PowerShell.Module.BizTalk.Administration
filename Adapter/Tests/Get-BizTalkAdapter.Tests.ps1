@@ -16,7 +16,7 @@
 
 #endregion
 
-Import-Module BizTalk.Administration\Adapter -Force
+Import-Module -Name $PSScriptRoot\..\Adapter -Force
 
 Describe 'Get-BizTalkAdapter' {
     InModuleScope Adapter {

@@ -52,16 +52,16 @@ function Assert-BizTalkHost {
 
 <#
 .SYNOPSIS
-    Gets information about the Microsoft BizTalk Server hosts.
+    Gets information about the Microsoft BizTalk Server Hosts.
 .DESCRIPTION
-    Gets either summary or detailed information about either one or all of the Microsoft BizTalk Server hosts.
+    Gets either summary or detailed information about either one or all of the Microsoft BizTalk Server Hosts.
 .PARAMETER Name
     The name of the BizTalk Server host.
 .PARAMETER Detailed
     Indicates that this cmdlet gets detailed information about eihter one or all of the Microsoft BizTalk Server
     hosts.
 .OUTPUTS
-    Returns either summary or detailed information about the Microsoft BizTalk Server hosts.
+    Returns either summary or detailed information about the Microsoft BizTalk Server Hosts.
 .EXAMPLE
     PS> Get-BizTalkHost
 .EXAMPLE
@@ -161,7 +161,7 @@ function New-BizTalkHost {
         $Trusted
     )
     if (Test-BizTalkHost -Name $Name) {
-        Write-Host "`t '$Name' host already exists."
+        Write-Information "`t $Type '$Name' host already exists."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Creating $Type '$Name' host")) {
         Write-Verbose "`t Creating $Type '$Name' host with '$Group' Windows group..."
         try {
@@ -178,7 +178,7 @@ function New-BizTalkHost {
             }
             Set-CimInstance -InputObject $instance
             if ($?) {
-                Write-Host "`t $Type '$Name' host has been created."
+                Write-Information "`t $Type '$Name' host has been created."
             } else {
                 Write-Error "`t Creating '$Name' host has failed."
                 throw "Creating '$Name' host has failed."
@@ -216,14 +216,14 @@ function Remove-BizTalkHost {
         if ($PsCmdlet.ShouldProcess("BizTalk Group", "Deleting '$Name' host")) {
             try {
                 Remove-CimInstance -InputObject $instance
-                Write-Host "`t '$Name' host has been deleted."
+                Write-Information "`t '$Name' host has been deleted."
             } catch {
                 Write-Error "`t Deleting '$Name' host has failed."
                 throw
             }
         }
     } else {
-        Write-Host "`t '$Name' host does not exists."
+        Write-Information "`t '$Name' host does not exist."
     }
 }
 
@@ -373,6 +373,6 @@ function Update-BizTalkHost {
                 -PerformedAction ("{0} has been {1}" -f $Subject, (@('enabled', 'disabled')[!$Trusted]))
         }
     } else {
-        Write-Host "`t '$Name' host does not exists."
+        Write-Information "`t '$Name' host does not exist."
     }
 }

@@ -21,12 +21,12 @@ Import-Module -Name $PSScriptRoot\..\Application -Force
 Describe 'New-BizTalkApplication' {
     InModuleScope Application {
 
-        Context 'Creating BizTalk Server applications' {
+        Context 'Creating Microsoft BizTalk Server Applications' {
             It 'Creates an application by name when none is existing yet.' {
                 { New-BizTalkApplication -Name 'Dummy.BizTalk.Application' } | Should -Not -Throw
             }
             It 'Throws when an application with the same name already exists.' {
-                { New-BizTalkApplication -Name 'Dummy.BizTalk.Application' } | Should -Throw -ExpectedMessage 'Command { BTSTask AddApp -ApplicationName:"$Name" }'
+                { New-BizTalkApplication -Name 'Dummy.BizTalk.Application' } | Should -Throw -ExpectedMessage 'Command { BTSTask AddApp -ApplicationName:"$Name" -Description:"$Description" }'
                 Remove-BizTalkApplication -Name 'Dummy.BizTalk.Application'
             }
         }

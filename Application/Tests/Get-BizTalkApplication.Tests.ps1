@@ -24,7 +24,7 @@ Import-Module -Name $PSScriptRoot\..\Application -Force
 Describe 'Get-BizTalkApplication' {
     InModuleScope Application {
 
-        Context 'Enumerating BizTalk Server applications' {
+        Context 'Enumerating Microsoft BizTalk Server Applications' {
             It 'By name returns one application when found.' {
                 Get-BizTalkApplication -Name 'BizTalk.System' | Should -Not -BeNullOrEmpty
             }

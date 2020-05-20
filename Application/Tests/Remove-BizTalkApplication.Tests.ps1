@@ -21,11 +21,11 @@ Import-Module -Name $PSScriptRoot\..\Application -Force
 Describe 'Remove-BizTalkApplication' {
     InModuleScope Application {
 
-        Context 'Removing BizTalk Server applications' {
+        Context 'Deleting Microsoft BizTalk Server Applications' {
             It 'Throws when no application with the given name exists.' {
                 { Remove-BizTalkApplication -Name 'Dummy.BizTalk.Application' } | Should -Throw -ExpectedMessage 'Command { BTSTask RemoveApp -ApplicationName:"$Name" }'
             }
-            It 'Removes an application by name when it exists.' {
+            It 'Deletes an application by name when it exists.' {
                 New-BizTalkApplication -Name 'Dummy.BizTalk.Application'
                 { Remove-BizTalkApplication -Name 'Dummy.BizTalk.Application' } | Should -Not -Throw
             }

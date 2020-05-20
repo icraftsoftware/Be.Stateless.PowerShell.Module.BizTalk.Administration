@@ -183,7 +183,7 @@ function Remove-BizTalkHandler {
         # TODO fail if try to remove default send handler
         $instance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter "AdapterName='$Adapter' and HostName='$Host'"
         Remove-CimInstance -InputObject $instance
-        Write-Information "`t $Direction $Adapter handler for '$Host' host has been removed."
+        Write-Information "`t $Direction $Adapter handler for '$Host' host has been deleted."
     }
 }
 

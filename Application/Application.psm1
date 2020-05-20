@@ -23,19 +23,19 @@ Set-StrictMode -Version Latest
 
 <#
 .SYNOPSIS
-    Gets the Microsoft BizTalk Server applications.
+    Gets the Microsoft BizTalk Server Applications.
 .DESCRIPTION
-    Gets either one or all of the Microsoft BizTalk Server applications as Microsoft.BizTalk.ExplorerOM.Application
+    Gets either one or all of the Microsoft BizTalk Server Applications as Microsoft.BizTalk.ExplorerOM.Application
     objects.
 .PARAMETER Name
-    The name of the Microsoft BizTalk Server application.
+    The name of the Microsoft BizTalk Server Application.
 .PARAMETER ManagementDatabaseServer
     The name of the SQL server hosting the management database; it is filled in by default with information found
     in the registry.
 .PARAMETER ManagementDatabaseName
     The name of the management database; it is filled in by default with information found in the registry.
 .OUTPUTS
-    Returns the Microsoft BizTalk Server applications.
+    Returns the Microsoft BizTalk Server Applications.
 .EXAMPLE
     PS> Get-BizTalkApplication
 .EXAMPLE
@@ -210,18 +210,18 @@ function Stop-BizTalkApplication {
 
 <#
 .SYNOPSIS
-    Tests the existence of a Microsoft BizTalk Server applications.
+    Tests the existence of a Microsoft BizTalk Server Applications.
 .DESCRIPTION
-    Tests the existence of a Microsoft BizTalk Server applications.
+    Tests the existence of a Microsoft BizTalk Server Applications.
 .PARAMETER Name
-    The name of the Microsoft BizTalk Server application.
+    The name of the Microsoft BizTalk Server Application.
 .PARAMETER ManagementDatabaseServer
     The name of the SQL server hosting the management database; it is filled in by default with information found
     in the registry.
 .PARAMETER ManagementDatabaseName
     The name of the management database; it is filled in by default with information found in the registry.
 .OUTPUTS
-    Returns $true if the Microsoft BizTalk Server application exists; $false otherwise.
+    Returns $true if the Microsoft BizTalk Server Application exists; $false otherwise.
 .EXAMPLE
     PS> Get-BizTalkApplication
 .EXAMPLE

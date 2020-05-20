@@ -21,8 +21,8 @@ Import-Module -Name $PSScriptRoot\..\Application -Force
 Describe 'Start-BizTalkApplication' {
     InModuleScope Application {
 
-        Context 'Starting BizTalk Server applications' {
-            It 'Starting an application enables and enlists all BizTalk services.' {
+        Context 'Starting Microsoft BizTalk Server Applications' {
+            It 'Starts an application and implicitly enables and enlists all BizTalk services.' {
                 Get-BizTalkApplication -Name 'BizTalk EDI Application' | Select-Object -ExpandProperty Status | Should -Be 'Stopped'
 
                 Start-BizTalkApplication -Name 'BizTalk EDI Application'

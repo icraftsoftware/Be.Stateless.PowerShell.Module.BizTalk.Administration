@@ -21,7 +21,7 @@ Import-Module -Name $PSScriptRoot\..\Application -Force
 Describe 'Test-BizTalkApplication' {
     InModuleScope Application {
 
-        Context 'Test BizTalk Server application''s existence' {
+        Context 'Test Microsoft BizTalk Server Application existence' {
             It 'Returns $true when the application exists.' {
                 Test-BizTalkApplication -Name BizTalk.System | Should -BeTrue
             }

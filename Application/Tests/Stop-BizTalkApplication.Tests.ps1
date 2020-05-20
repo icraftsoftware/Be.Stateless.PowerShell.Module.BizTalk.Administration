@@ -21,8 +21,8 @@ Import-Module -Name $PSScriptRoot\..\Application -Force
 Describe 'Stop-BizTalkApplication' {
     InModuleScope Application {
 
-        Context 'Stopping BizTalk Server applications' {
-            It 'Stopping an application disables and unenlists all BizTalk services.' {
+        Context 'Stopping Microsoft BizTalk Server Applications' {
+            It 'Stops an application and implicitly disables and unenlists all BizTalk services.' {
                 Get-BizTalkApplication -Name 'BizTalk EDI Application' | Select-Object -ExpandProperty Status | Should -Be 'Started'
 
                 Stop-BizTalkApplication -Name 'BizTalk EDI Application'

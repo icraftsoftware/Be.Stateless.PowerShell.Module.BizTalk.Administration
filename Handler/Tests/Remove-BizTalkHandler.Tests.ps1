@@ -27,17 +27,17 @@ Describe 'Remove-BizTalkHandler' {
 
         Context 'When BizTalk Server Handler exists' {
             Mock -CommandName Write-Information -ModuleName Handler
-            It 'Removes the BizTalk Server Handler.' {
+            It 'Deletes the BizTalk Server Handler.' {
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeTrue
                 { Remove-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeFalse
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Send FILE handler for ''Test_Host'' host has been removed.' }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Send FILE handler for ''Test_Host'' host has been deleted.' }
             }
         }
 
         Context 'When BizTalk Server Handler does not exist' {
             Mock -CommandName Write-Information -ModuleName Handler
-            It 'Skips the BizTalk Server Handler creation.' {
+            It 'Skips the BizTalk Server Handler deletion.' {
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeFalse
                 { Remove-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send -InformationAction Continue } | Should -Not -Throw
                 Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Send FILE handler for ''Test_Host'' host does not exist.' }

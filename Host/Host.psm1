@@ -25,11 +25,11 @@ enum HostType {
 
 <#
 .SYNOPSIS
-    Ensures a Microsoft BizTalk Server host exists.
+    Ensures a Microsoft BizTalk Server Host exists.
 .DESCRIPTION
-    This command will throw if the Microsoft BizTalk Server host does not exist and will silently complete otherwise.
+    This command will throw if the Microsoft BizTalk Server Host does not exist and will silently complete otherwise.
 .PARAMETER Name
-    The name of the BizTalk Server host.
+    The name of the Microsoft BizTalk Server Host.
 .EXAMPLE
     PS> Assert-BizTalkHost -Name 'Transmit Host'
 .NOTES
@@ -56,7 +56,7 @@ function Assert-BizTalkHost {
 .DESCRIPTION
     Gets either summary or detailed information about either one or all of the Microsoft BizTalk Server Hosts.
 .PARAMETER Name
-    The name of the BizTalk Server host.
+    The name of the Microsoft BizTalk Server Host.
 .PARAMETER Detailed
     Indicates that this cmdlet gets detailed information about eihter one or all of the Microsoft BizTalk Server
     hosts.
@@ -94,19 +94,19 @@ function Get-BizTalkHost {
 
 <#
 .SYNOPSIS
-    Creates a new BizTalk Server host.
+    Creates a new Microsoft BizTalk Server Host.
 .DESCRIPTION
-    Creates and configures a new BizTalk Server host.
+    Creates and configures a new Microsoft BizTalk Server Host.
 .PARAMETER Name
-    The name of the BizTalk Server host.
+    The name of the Microsoft BizTalk Server Host.
 .PARAMETER Type
-    The type of the BizTalk Server host, either InProcess or Isolated.
+    The type of the Microsoft BizTalk Server Host, either InProcess or Isolated.
 .PARAMETER Group
     The Windows group used to control access of this host.
 .PARAMETER x86
     Whether instances of this host will be 32-bit only processes.
 .PARAMETER Default
-    Whether this host is to be the default host in the BizTalk Server group or not.
+    Whether this host is to be the default host in the Microsoft BizTalk Server group or not.
 .PARAMETER Tracking
     Wheter to enable the BizTalk Tracking component for this host or not.
 .PARAMETER Trusted
@@ -192,11 +192,11 @@ function New-BizTalkHost {
 
 <#
 .SYNOPSIS
-    Removes a BizTalk Server Host.
+    Removes a Microsoft BizTalk Server Host.
 .DESCRIPTION
-    Removes a BizTalk Server Host.
+    Removes a Microsoft BizTalk Server Host.
 .PARAMETER Name
-    The name of the BizTalk Server host.
+    The name of the Microsoft BizTalk Server Host.
 .EXAMPLE
     PS> Remove-BizTalkHost -Name 'Transmit Host'
 .NOTES
@@ -229,15 +229,20 @@ function Remove-BizTalkHost {
 
 <#
 .SYNOPSIS
-    Returns whether a Microsoft BizTalk Server host exists.
+    Returns whether a Microsoft BizTalk Server Host type exists.
 .DESCRIPTION
-    This command will return $true if the Microsoft BizTalk Server host exists; $false otherwise.
+    This command will return $true if the Microsoft BizTalk Server Host exists; $false otherwise. The existence test
+    can be narrowed down to a particular Type of Microsoft BizTalk Server Host, i.e. either InProcess or Isolated.
 .PARAMETER Name
-    The name of the BizTalk Server host.
+    The name of the Microsoft BizTalk Server Host.
+.PARAMETER Type
+    The type of the Microsoft BizTalk Server Host.
 .OUTPUTS
-    $true if the BizTalk Server host exists; $false otherwise.
+    $true if the Microsoft BizTalk Server Host exists and is of the given Type; $false otherwise.
 .EXAMPLE
     PS> Test-BizTalkHost -Name 'Transmit Host'
+.EXAMPLE
+    PS> Test-BizTalkHost -Name 'Transmit Host' -Type Isolated
 .NOTES
     © 2020 be.stateless.
 #>
@@ -248,18 +253,27 @@ function Test-BizTalkHost {
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $Name
+        $Name,
+
+        [Parameter(Mandatory = $false)]
+        [HostType]
+        $Type
     )
-    [bool] (Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'")
+    $btsHost = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
+    if ($btsHost -and $PSBoundParameters.ContainsKey('Type')) {
+        $btsHost.HostType -eq $Type
+    } else {
+        [bool]$btsHost
+    }
 }
 
 <#
 .SYNOPSIS
-    Updates the configuration settings of a BizTalk Server host.
+    Updates the configuration settings of a Microsoft BizTalk Server Host.
 .DESCRIPTION
-    Updates the configuration settings of a BizTalk Server host.
+    Updates the configuration settings of a Microsoft BizTalk Server Host.
 .PARAMETER Name
-    The name of the BizTalk Server host.
+    The name of the Microsoft BizTalk Server Host.
 .PARAMETER x86
     Whether instances of this host will be 32-bit only processes.
 .PARAMETER Default

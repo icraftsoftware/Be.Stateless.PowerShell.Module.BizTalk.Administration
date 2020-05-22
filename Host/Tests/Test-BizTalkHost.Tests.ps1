@@ -27,7 +27,13 @@ Describe 'Test-BizTalkHost' {
             It 'Returns $true when the host exists.' {
                 Test-BizTalkHost -Name BizTalkServerApplication | Should -BeTrue
             }
-            It 'Returns $false when the host exists.' {
+            It 'Returns $true when the host exists and is of the given type.' {
+                Test-BizTalkHost -Name BizTalkServerApplication -Type InProcess | Should -BeTrue
+            }
+            It 'Returns $false when the host exists but is not of the given type.' {
+                Test-BizTalkHost -Name BizTalkServerApplication -Type Isolated | Should -BeFalse
+            }
+            It 'Returns $false when the host does not exist.' {
                 Test-BizTalkHost -Name InexistentHost | Should -BeFalse
             }
         }

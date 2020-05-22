@@ -20,18 +20,18 @@ Set-StrictMode -Version Latest
 
 <#
 .SYNOPSIS
-    Gets information about the Microsoft BizTalk Server adapters.
+    Gets information about the Microsoft BizTalk Server Adapters.
 .DESCRIPTION
-    Gets information about the Microsoft BizTalk Server adapters available in Microsoft BizTalk Server or the local
+    Gets information about the Microsoft BizTalk Server Adapters available in Microsoft BizTalk Server or the local
     machine's COM registry.
 .PARAMETER Name
-    The name of the Microsoft BizTalk Server adapter.
+    The name of the Microsoft BizTalk Server Adapter.
 .PARAMETER Source
-    The place where to look for the Microsoft BizTalk Server adapters: either among those configured and available
+    The place where to look for the Microsoft BizTalk Server Adapters: either among those configured and available
     in Microsoft BizTalk Server, or among those registered in the local machine's COM registry, or as a
     combination of both sources. It defaults to BizTalk.
 .OUTPUTS
-    Returns information about the Microsoft BizTalk Server adapters.
+    Returns information about the Microsoft BizTalk Server Adapters.
 .EXAMPLE
     PS> Get-BizTalkAdapter
 .EXAMPLE
@@ -154,12 +154,12 @@ function Get-BizTalkAdapter {
     Register an adapter in Microsoft BizTalk Server. The adapter to be registerd should be locally installed in order
     for its registration to succeed unless the MgmtCLSID is forced.
 .PARAMETER Name
-    The name of the Microsoft BizTalk Server adapter to register.
+    The name of the Microsoft BizTalk Server Adapter to register.
 .PARAMETER MgmtCLSID
-    The MgmtCLSID of the Microsoft BizTalk Server adapter to register. If the MgmtCLSID argument is omitted, it
+    The MgmtCLSID of the Microsoft BizTalk Server Adapter to register. If the MgmtCLSID argument is omitted, it
     will be looked up in the local machine's COM registry.
 .PARAMETER Comment
-    A descriptive comment of the Microsoft BizTalk Server adapter to register.
+    A descriptive comment of the Microsoft BizTalk Server Adapter to register.
 .EXAMPLE
     PS> New-BizTalkAdapter -Name 'WCF-SQL'
 .EXAMPLE
@@ -218,7 +218,7 @@ function New-BizTalkAdapter {
 .DESCRIPTION
     Unregister an adapter from Microsoft BizTalk Server.
 .PARAMETER Name
-    The name of the Microsoft BizTalk Server adapter to unregister.
+    The name of the Microsoft BizTalk Server Adapter to unregister.
 .EXAMPLE
     PS> Remove-BizTalkAdapter -Name 'WCF-SQL'
 .NOTES
@@ -246,19 +246,19 @@ function Remove-BizTalkAdapter {
 
 <#
 .SYNOPSIS
-    Returns whether a Microsoft BizTalk Server adapter exists.
+    Returns whether a Microsoft BizTalk Server Adapter exists.
 .DESCRIPTION
-    This command will return $true if the Microsoft BizTalk Server adapter exists; $false otherwise. If the existence
+    This command will return $true if the Microsoft BizTalk Server Adapter exists; $false otherwise. If the existence
     has to be tested for the combined sources, this command will return $true only if the Microsoft BizTalk Server
     adapter exists in both sources.
 .PARAMETER Name
-    The name of the Microsoft BizTalk Server adapter.
+    The name of the Microsoft BizTalk Server Adapter.
 .PARAMETER Source
-    The place where to look for the Microsoft BizTalk Server adapter: either among those configured and available
+    The place where to look for the Microsoft BizTalk Server Adapter: either among those configured and available
     in Microsoft BizTalk Server, or among those registered in the local machine's COM registry, or as a
     combination of both sources. It defaults to BizTalk.
 .OUTPUTS
-    $true if the Microsoft BizTalk Server adapter exists; $false otherwise.
+    $true if the Microsoft BizTalk Server Adapter exists; $false otherwise.
 .EXAMPLE
     PS> Test-BizTalkAdapter -Name FILE
 .EXAMPLE

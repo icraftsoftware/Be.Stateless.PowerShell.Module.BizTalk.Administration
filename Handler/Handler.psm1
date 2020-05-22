@@ -25,17 +25,17 @@ enum Direction {
 
 <#
 .SYNOPSIS
-    Gets information Microsoft BizTalk Server adapter's handlers.
+    Gets information Microsoft BizTalk Server Adapter Handlers.
 .DESCRIPTION
-    Gets information Microsoft BizTalk Server adapter's handlers.
+    Gets information Microsoft BizTalk Server Adapter Handlers.
 .PARAMETER Adapter
-    The name of the Microsoft BizTalk Server adapter to get.
+    The name of the Microsoft BizTalk Server Adapter to get.
 .PARAMETER Host
-    The name of the Microsoft BizTalk Server host for which to get the adapter's handlers.
+    The name of the Microsoft BizTalk Server Host for which to get the Adapter Handlers.
 .PARAMETER Direction
-    The direction of the Microsoft BizTalk Server adapter's handlers to get.
+    The direction of the Microsoft BizTalk Server Adapter Handlers to get.
 .OUTPUTS
-    Returns information about Microsoft BizTalk Server adapter's handlers.
+    Returns information about Microsoft BizTalk Server Adapter Handlers.
 .EXAMPLE
     PS> Get-BizTalkHandler -Adapter FILE
 .EXAMPLE
@@ -88,9 +88,9 @@ function Get-BizTalkHandler {
 
 <#
 .SYNOPSIS
-    Creates a Microsoft BizTalk Server adapter's handler.
+    Creates a Microsoft BizTalk Server Adapter Handler.
 .DESCRIPTION
-    Creates and configures a Microsoft BizTalk Server adapter's handler.
+    Creates and configures a Microsoft BizTalk Server Adapter Handler.
 .PARAMETER Adapter
     The name of the adapter for which to create a Microsoft BizTalk Server handler.
 .PARAMETER Host
@@ -98,7 +98,7 @@ function Get-BizTalkHandler {
 .PARAMETER Direction
     The diretion of the Microsoft BizTalk Server handler to be created, either Receive or Send.
 .PARAMETER Default
-    Whether the Microsoft BizTalk Server handler to be created will be the default adapter's handler.
+    Whether the Microsoft BizTalk Server handler to be created will be the default Adapter Handler.
 .EXAMPLE
     PS> New-BizTalkHandler -Adapter FILE -Host BizTalkServerApplication -Direction Receive
 .LINK
@@ -189,9 +189,9 @@ function Remove-BizTalkHandler {
 
 <#
 .SYNOPSIS
-    Returns whether a Microsoft BizTalk Server adapter's handler exists.
+    Returns whether a Microsoft BizTalk Server Adapter Handler exists.
 .DESCRIPTION
-    This command will return $true if the Microsoft BizTalk Server adapter's handler exists; $false otherwise.
+    This command will return $true if the Microsoft BizTalk Server Adapter Handler exists; $false otherwise.
 .PARAMETER Adapter
     The name of the adapter for which the existence of a Microsoft BizTalk Server handler is tested.
 .PARAMETER Host
@@ -199,7 +199,7 @@ function Remove-BizTalkHandler {
 .PARAMETER Direction
     The diretion of the Microsoft BizTalk Server handler whose existence is to be tested, either Receive or Send.
 .OUTPUTS
-    $true if the BizTalk Server handler exists; $false otherwise.
+    $true if the Microsoft BizTalk Server handler exists; $false otherwise.
 .EXAMPLE
     PS> Test-BizTalkHandler -Adapter FILE -Host BizTalkServerApplication -Direction Send
 .NOTES

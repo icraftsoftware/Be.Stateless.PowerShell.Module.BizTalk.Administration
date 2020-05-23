@@ -109,7 +109,7 @@ function Get-BizTalkAdapter {
 
     if ($Source -eq 'BizTalk') {
         $filter = if (![string]::IsNullOrWhiteSpace($Name)) { "Name='$Name'" }
-        Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Filter $filter |
+        Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Filter $filter |
             Add-Member -NotePropertyName Source -NotePropertyValue @($Source) -PassThru
     } elseif ($Source -eq 'Registry') {
         if ([string]::IsNullOrWhiteSpace($Name)) {
@@ -207,7 +207,7 @@ function New-BizTalkAdapter {
         }
         if (-not [string]::IsNullOrWhiteSpace($Comment)) { $properties.Comment = $Comment }
         $properties
-        New-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Property $properties | Out-Null
+        New-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Property $properties | Out-Null
         Write-Verbose "`t $Name adapter in Microsoft BizTalk Server has been registered."
     }
 }
@@ -238,8 +238,8 @@ function Remove-BizTalkAdapter {
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Unregistering $Name adapter")) {
         Write-Verbose "`t Unregistering $Name adapter from Microsoft BizTalk Server..."
         $filter = if (![string]::IsNullOrWhiteSpace($Name)) { "Name='$Name'" }
-        $instance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Filter $filter
-        Remove-CimInstance -InputObject $instance
+        $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Filter $filter
+        Remove-CimInstance -ErrorAction Stop -InputObject $instance
         Write-Verbose "`t $Name adapter has been unregistered from Microsoft BizTalk Server."
     }
 }

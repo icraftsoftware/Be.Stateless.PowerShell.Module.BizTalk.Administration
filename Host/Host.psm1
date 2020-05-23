@@ -89,7 +89,7 @@ function Get-BizTalkHost {
     $filter = if (![string]::IsNullOrWhiteSpace($Name)) {
         "Name='$Name'"
     }
-    Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter $filter
+    Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter $filter
 }
 
 <#
@@ -164,29 +164,18 @@ function New-BizTalkHost {
         Write-Information "`t $Type '$Name' host already exists."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Creating $Type '$Name' host")) {
         Write-Verbose "`t Creating $Type '$Name' host with '$Group' Windows group..."
-        try {
-            # New-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Property @{
-            $instanceClass = Get-CimClass -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting
-            $instance = New-CimInstance -CimClass $instanceClass -Property @{
-                Name            = $Name
-                HostType        = [Uint32]$Type
-                NTGroupName     = $Group
-                IsHost32BitOnly = [bool]$x86
-                IsDefault       = [bool]$Default
-                HostTracking    = [bool]$Tracking
-                AuthTrusted     = [bool]$Trusted
-            }
-            Set-CimInstance -InputObject $instance
-            if ($?) {
-                Write-Information "`t $Type '$Name' host has been created."
-            } else {
-                Write-Error "`t Creating '$Name' host has failed."
-                throw "Creating '$Name' host has failed."
-            }
-        } catch {
-            Write-Error "`t Creating '$Name' host has failed."
-            throw
+        $instanceClass = Get-CimClass -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting
+        $instance = New-CimInstance -ErrorAction Stop -CimClass $instanceClass -Property @{
+            Name            = $Name
+            HostType        = [Uint32]$Type
+            NTGroupName     = $Group
+            IsHost32BitOnly = [bool]$x86
+            IsDefault       = [bool]$Default
+            HostTracking    = [bool]$Tracking
+            AuthTrusted     = [bool]$Trusted
         }
+        Set-CimInstance -ErrorAction Stop -InputObject $instance
+        Write-Information "`t $Type '$Name' host has been created."
     }
 }
 
@@ -212,15 +201,10 @@ function Remove-BizTalkHost {
         $Name
     )
     if (Test-BizTalkHost -Name $Name) {
-        $instance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
+        $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
         if ($PsCmdlet.ShouldProcess("BizTalk Group", "Deleting '$Name' host")) {
-            try {
-                Remove-CimInstance -InputObject $instance
-                Write-Information "`t '$Name' host has been deleted."
-            } catch {
-                Write-Error "`t Deleting '$Name' host has failed."
-                throw
-            }
+            Remove-CimInstance -ErrorAction Stop -InputObject $instance
+            Write-Information "`t '$Name' host has been deleted."
         }
     } else {
         Write-Information "`t '$Name' host does not exist."
@@ -259,7 +243,7 @@ function Test-BizTalkHost {
         [HostType]
         $Type
     )
-    $btsHost = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
+    $btsHost = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
     if ($btsHost -and $PSBoundParameters.ContainsKey('Type')) {
         $btsHost.HostType -eq $Type
     } else {
@@ -344,18 +328,12 @@ function Update-BizTalkHost {
             $PerformedAction
         )
 
-        $instance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
+        $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
         if ($instance.$Property -ne $value -and $PsCmdlet.ShouldProcess("BizTalk Group", $ActionToPerform)) {
             Write-Verbose "`t $ActionToPerform..."
             $instance.$Property = $Value
-            Set-CimInstance -InputObject $instance
-            try {
-                Set-CimInstance -InputObject $instance
-                Write-Verbose "`t $PerformedAction."
-            } catch {
-                Write-Error "`t $ActionToPerform has failed."
-                throw
-            }
+            Set-CimInstance -ErrorAction Stop -InputObject $instance
+            Write-Verbose "`t $PerformedAction."
         }
     }
 

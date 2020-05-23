@@ -79,7 +79,7 @@ function Get-BizTalkHandler {
                 } elseif (![string]::IsNullOrWhiteSpace($h)) {
                     "HostName='$h'"
                 }
-                Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter $filter |
+                Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter $filter |
                     Add-Member -NotePropertyName Direction -NotePropertyValue $d -PassThru
             }
         }
@@ -136,7 +136,7 @@ function New-BizTalkHandler {
         $className = Get-HandlerCimClassName -Direction $Direction
         $properties = @{ AdapterName = $Adapter ; HostName = $Host }
         if ($Direction -eq 'Send' -and $Default.IsPresent) { $properties.IsDefault = [bool]$Default }
-        New-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName $className -Property $properties | Out-Null
+        New-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName $className -Property $properties | Out-Null
         Write-Information "`t $Direction $Adapter handler for '$Host' host has been created."
     }
 }
@@ -181,8 +181,8 @@ function Remove-BizTalkHandler {
         Write-Verbose "`t Removing $Direction $Adapter handler for '$Host' host..."
         $className = Get-HandlerCimClassName -Direction $Direction
         # TODO fail if try to remove default send handler
-        $instance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter "AdapterName='$Adapter' and HostName='$Host'"
-        Remove-CimInstance -InputObject $instance
+        $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter "AdapterName='$Adapter' and HostName='$Host'"
+        Remove-CimInstance -ErrorAction Stop -InputObject $instance
         Write-Information "`t $Direction $Adapter handler for '$Host' host has been deleted."
     }
 }
@@ -224,7 +224,7 @@ function Test-BizTalkHandler {
         $Direction
     )
     $className = Get-HandlerCimClassName -Direction $Direction
-    [bool] (Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter "AdapterName='$Adapter' and HostName='$Host'")
+    [bool] (Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter "AdapterName='$Adapter' and HostName='$Host'")
 }
 
 function Get-HandlerCimClassName {

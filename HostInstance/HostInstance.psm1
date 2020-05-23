@@ -54,9 +54,9 @@ function Disable-BizTalkHostInstance {
     if (Test-BizTalkHostInstance -Name $Name -Server $Server) {
         if ($PsCmdlet.ShouldProcess("BizTalk Group", "Disabling '$Name' Host Instance on '$Server' server")) {
             Write-Verbose "`t '$Name' Host Instance on '$Server' server is being disabled..."
-            $hostInstance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
+            $hostInstance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
             $hostInstance.IsDisabled = $true
-            Set-CimInstance -InputObject $hostInstance
+            Set-CimInstance -ErrorAction Stop -InputObject $hostInstance
             Write-Verbose "`t '$Name' Host Instance on '$Server' server has been disabled."
         }
     } else {
@@ -100,9 +100,9 @@ function Enable-BizTalkHostInstance {
     if (Test-BizTalkHostInstance -Name $Name -Server $Server) {
         if ($PsCmdlet.ShouldProcess("BizTalk Group", "Disabling '$Name' Host Instance on '$Server' server")) {
             Write-Verbose "`t '$Name' Host Instance on '$Server' server is being enabled..."
-            $hostInstance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
+            $hostInstance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
             $hostInstance.IsDisabled = $false
-            Set-CimInstance -InputObject $hostInstance
+            Set-CimInstance -ErrorAction Stop -InputObject $hostInstance
             Write-Verbose "`t '$Name' Host Instance on '$Server' server has been enabled."
         }
     } else {
@@ -155,7 +155,7 @@ function Get-BizTalkHostInstance {
     } elseif (![string]::IsNullOrWhiteSpace($Server)) {
         "RunningServer='$Server'"
     }
-    Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter $filter
+    Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter $filter
 }
 
 <#
@@ -255,14 +255,14 @@ function New-BizTalkHostInstance {
 
             if (Test-BizTalkHost -Name $Name -Type InProcess) {
                 if ($Disabled.IsPresent) {
-                    $hostInstance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
+                    $hostInstance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
                     $hostInstance.IsDisabled = [bool]$Disabled
                     # $hostInstance |
-                    Set-CimInstance -InputObject $hostInstance
+                    Set-CimInstance -ErrorAction Stop -InputObject $hostInstance
                 } elseif ($Started) {
-                    Invoke-CimMethod -InputObject $hostInstance -MethodName Start -Arguments @{ } | Out-Null
+                    Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Start -Arguments @{ } | Out-Null
                 } else {
-                    Invoke-CimMethod -InputObject $hostInstance -MethodName Stop -Arguments @{ } | Out-Null
+                    Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Stop -Arguments @{ } | Out-Null
                 }
             }
             Write-Information "`t '$Name' Host Instance on '$Server' server has been created."
@@ -314,17 +314,17 @@ function Remove-BizTalkHostInstance {
     if (Test-BizTalkHostInstance -Name $Name -Server $Server) {
         if ($PsCmdlet.ShouldProcess("BizTalk Group", "Deleting '$Name' Host Instance on '$Server' server")) {
             try {
-                $hostInstance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
+                $hostInstance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
                 # https://docs.microsoft.com/en-us/biztalk/core/technical-reference/msbts-hostinstance-configurationstate-property-wmi
                 if ($null -ne $hostInstance -and $hostInstance.ConfigurationState -eq 1) {
                     if (Test-BizTalkHost -Name $Name -Type InProcess) {
-                        Invoke-CimMethod -InputObject $hostInstance -MethodName Stop -Arguments @{ } | Out-Null
+                        Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Stop -Arguments @{ } | Out-Null
                     }
-                    Invoke-CimMethod -InputObject $hostInstance -MethodName Uninstall -Arguments @{ } | Out-Null
+                    Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Uninstall -Arguments @{ } | Out-Null
                 }
-                $serverHostInstance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_ServerHost -Filter "HostName='$Name' and ServerName='$Server'"
+                $serverHostInstance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_ServerHost -Filter "HostName='$Name' and ServerName='$Server'"
                 if ($null -ne $serverHostInstance -and $serverHostInstance.IsMapped) {
-                    Invoke-CimMethod -InputObject $serverHostInstance -MethodName Unmap -Arguments @{ } | Out-Null
+                    Invoke-CimMethod -ErrorAction Stop -InputObject $serverHostInstance -MethodName Unmap -Arguments @{ } | Out-Null
                 }
                 Write-Information "`t '$Name' Host Instance on '$Server' server has been deleted."
             } catch {
@@ -382,12 +382,12 @@ function Restart-BizTalkHostInstance {
     if (Test-BizTalkHostInstance -Name $Name -Server $Server) {
         if (Test-BizTalkHost -Name $Name -Type InProcess) {
             if ($PsCmdlet.ShouldProcess("BizTalk Group", "Restarting '$Name' Host Instance on '$Server' server")) {
-                $hostInstance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
+                $hostInstance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
                 # https://docs.microsoft.com/en-us/biztalk/core/technical-reference/msbts-hostinstance-servicestate-property-wmi
                 if ($Force -or $hostInstance.ServiceState -in @(2, 4) <# Sart Pending or Running #>) {
                     Write-Verbose "`t '$Name' Host Instance on '$Server' server is being restarted..."
-                    Invoke-CimMethod -InputObject $hostInstance -MethodName Stop -Arguments @{ } | Out-Null
-                    Invoke-CimMethod -InputObject $hostInstance -MethodName Start -Arguments @{ } | Out-Null
+                    Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Stop -Arguments @{ } | Out-Null
+                    Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Start -Arguments @{ } | Out-Null
                     Write-Verbose "`t '$Name' Host Instance on '$Server' server has been restarted."
                 } else {
                     Write-Verbose "`t '$Name' Host Instance on '$Server' server does not need to be restarted as it is not started."
@@ -439,8 +439,8 @@ function Start-BizTalkHostInstance {
         if (Test-BizTalkHost -Name $Name -Type InProcess) {
             if ($PsCmdlet.ShouldProcess("BizTalk Group", "Starting '$Name' Host Instance on '$Server' server")) {
                 Write-Verbose "`t '$Name' Host Instance on '$Server' server is being started..."
-                $hostInstance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
-                Invoke-CimMethod -InputObject $hostInstance -MethodName Start -Arguments @{ } | Out-Null
+                $hostInstance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
+                Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Start -Arguments @{ } | Out-Null
                 Write-Verbose "`t '$Name' Host Instance on '$Server' server has been started."
             }
         } else {
@@ -489,8 +489,8 @@ function Stop-BizTalkHostInstance {
         if (Test-BizTalkHost -Name $Name -Type InProcess) {
             if ($PsCmdlet.ShouldProcess("BizTalk Group", "Stopping '$Name' Host Instance on '$Server' server")) {
                 Write-Verbose "`t '$Name' Host Instance on '$Server' server is being stopped..."
-                $hostInstance = Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
-                Invoke-CimMethod -InputObject $hostInstance -MethodName Stop -Arguments @{ } | Out-Null
+                $hostInstance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
+                Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Stop -Arguments @{ } | Out-Null
                 Write-Verbose "`t '$Name' Host Instance on '$Server' server has been stopped."
             }
         } else {
@@ -535,5 +535,5 @@ function Test-BizTalkHostInstance {
         [string]
         $Server = $Env:COMPUTERNAME
     )
-    [bool] (Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'")
+    [bool] (Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'")
 }

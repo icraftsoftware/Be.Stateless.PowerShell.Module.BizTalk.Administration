@@ -67,7 +67,7 @@ function Get-BizTalkHandler {
         [Direction[]]
         $Direction = @([Direction]::Receive, [Direction]::Send)
     )
-
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     foreach ($d in $Direction) {
         $className = Get-HandlerCimClassName -Direction $d
         foreach ($a in $Adapter) {
@@ -129,6 +129,7 @@ function New-BizTalkHandler {
         [switch]
         $Default
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHandler -Adapter $Adapter -Host $Host -Direction $Direction) {
         Write-Information "`t $Direction $Adapter handler for '$Host' host already exists."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Creating $Direction $Adapter handler for '$Host' host")) {
@@ -175,6 +176,7 @@ function Remove-BizTalkHandler {
         [Direction]
         $Direction
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not (Test-BizTalkHandler -Adapter $Adapter -Host $Host -Direction $Direction)) {
         Write-Information "`t $Direction $Adapter handler for '$Host' host does not exist."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Removing $Direction $Adapter handler for '$Host' host")) {
@@ -223,6 +225,7 @@ function Test-BizTalkHandler {
         [Direction]
         $Direction
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     $className = Get-HandlerCimClassName -Direction $Direction
     [bool] (Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter "AdapterName='$Adapter' and HostName='$Host'")
 }

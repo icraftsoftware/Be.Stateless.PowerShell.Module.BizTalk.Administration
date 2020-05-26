@@ -22,6 +22,7 @@ function Get-BizTalGroupSettings {
     [CmdletBinding()]
     [OutputType([PSCustomObject])]
     param()
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Get-CimInstance -Namespace root\MicrosoftBizTalkServer -ClassName MSBTS_GroupSetting
 }
 

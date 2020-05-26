@@ -51,6 +51,7 @@ function Disable-BizTalkHostInstance {
         [string]
         $Server = $Env:COMPUTERNAME
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHostInstance -Name $Name -Server $Server) {
         if ($PsCmdlet.ShouldProcess("BizTalk Group", "Disabling '$Name' Host Instance on '$Server' server")) {
             Write-Verbose "`t '$Name' Host Instance on '$Server' server is being disabled..."
@@ -97,6 +98,7 @@ function Enable-BizTalkHostInstance {
         [string]
         $Server = $Env:COMPUTERNAME
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHostInstance -Name $Name -Server $Server) {
         if ($PsCmdlet.ShouldProcess("BizTalk Group", "Disabling '$Name' Host Instance on '$Server' server")) {
             Write-Verbose "`t '$Name' Host Instance on '$Server' server is being enabled..."
@@ -148,6 +150,7 @@ function Get-BizTalkHostInstance {
         [string]
         $Server
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     $filter = if (![string]::IsNullOrWhiteSpace($Name) -and ![string]::IsNullOrWhiteSpace($Server)) {
         "HostName='$Name' and RunningServer='$Server'"
     } elseif (![string]::IsNullOrWhiteSpace($Name)) {
@@ -224,6 +227,7 @@ function New-BizTalkHostInstance {
         [switch]
         $Started
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHostInstance -Name $Name -Server $Server) {
         Write-Information "`t '$Name' Host Instance on '$Server' server already exists."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Creating '$Name' Host Instance on '$Server' server")) {
@@ -311,6 +315,7 @@ function Remove-BizTalkHostInstance {
         [string]
         $Server = $Env:COMPUTERNAME
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHostInstance -Name $Name -Server $Server) {
         if ($PsCmdlet.ShouldProcess("BizTalk Group", "Deleting '$Name' Host Instance on '$Server' server")) {
             try {
@@ -379,6 +384,7 @@ function Restart-BizTalkHostInstance {
         [switch]
         $Force
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHostInstance -Name $Name -Server $Server) {
         if (Test-BizTalkHost -Name $Name -Type InProcess) {
             if ($PsCmdlet.ShouldProcess("BizTalk Group", "Restarting '$Name' Host Instance on '$Server' server")) {
@@ -435,6 +441,7 @@ function Start-BizTalkHostInstance {
         [string]
         $Server = $Env:COMPUTERNAME
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHostInstance -Name $Name -Server $Server) {
         if (Test-BizTalkHost -Name $Name -Type InProcess) {
             if ($PsCmdlet.ShouldProcess("BizTalk Group", "Starting '$Name' Host Instance on '$Server' server")) {
@@ -485,6 +492,7 @@ function Stop-BizTalkHostInstance {
         [string]
         $Server = $Env:COMPUTERNAME
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHostInstance -Name $Name -Server $Server) {
         if (Test-BizTalkHost -Name $Name -Type InProcess) {
             if ($PsCmdlet.ShouldProcess("BizTalk Group", "Stopping '$Name' Host Instance on '$Server' server")) {
@@ -535,5 +543,6 @@ function Test-BizTalkHostInstance {
         [string]
         $Server = $Env:COMPUTERNAME
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     [bool] (Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'")
 }

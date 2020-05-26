@@ -36,6 +36,7 @@ function Assert-BizTalkServer {
     [OutputType([void])]
     param()
 
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkServer)) { throw "Microsoft BizTalk Server is not installed locally." }
     Write-Verbose "Microsoft BizTalk Server is installed locally."
 }
@@ -55,11 +56,12 @@ function Test-BizTalkServer {
     [OutputType([bool])]
     param()
 
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Test-Path -Path 'HKLM:\SOFTWARE\Microsoft\BizTalk Server\3.0\*'
 }
 
 <#
- # MAIN
+ # Main
  #>
 
 # Have BizTalk Tracking tools available on path, noticeably bm.exe

@@ -63,6 +63,7 @@ function Get-BizTalkApplication {
         [string]
         $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {
         if ([string]::IsNullOrWhiteSpace($Name)) {
             $catalog.Applications
@@ -86,6 +87,7 @@ function New-BizTalkApplication {
         [string]
         $Description
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Invoke-Tool -Command { BTSTask AddApp -ApplicationName:"$Name" -Description:"$Description" }
 }
 
@@ -98,6 +100,7 @@ function Remove-BizTalkApplication {
         [string]
         $Name
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Invoke-Tool -Command { BTSTask RemoveApp -ApplicationName:"$Name" }
 }
 
@@ -130,6 +133,7 @@ function Start-BizTalkApplication {
         [string]
         $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {
         $application = $catalog.Applications[$Name]
         try {
@@ -175,6 +179,7 @@ function Stop-BizTalkApplication {
         [string]
         $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Use-Object ($controller = Get-BizTalkController $ManagementDatabaseServer $ManagementDatabaseName) {
         if ($TerminateServiceInstances) {
             $controller.GetServiceInstances() |
@@ -248,6 +253,7 @@ function Test-BizTalkApplication {
         [string]
         $ManagementDatabaseName = (Group\Get-BizTalGroupMgmtDbName)
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {
         $null -ne $catalog.Applications[$Name]
     }

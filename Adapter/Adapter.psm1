@@ -107,6 +107,7 @@ function Get-BizTalkAdapter {
         $adapter
     }
 
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if ($Source -eq 'BizTalk') {
         $filter = if (![string]::IsNullOrWhiteSpace($Name)) { "Name='$Name'" }
         Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Filter $filter |
@@ -190,6 +191,7 @@ function New-BizTalkAdapter {
         [string]
         $Comment
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkAdapter -Name $Name -Source BizTalk) {
         Write-Information "`t $Name adapter has already been registered in Microsoft BizTalk Server."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Registering $Name adapter")) {
@@ -233,6 +235,7 @@ function Remove-BizTalkAdapter {
         [string]
         $Name
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkAdapter -Name $Name -Source BizTalk)) {
         Write-Information "`t $Name adapter has not been registered in Microsoft BizTalk Server."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Unregistering $Name adapter")) {
@@ -282,6 +285,7 @@ function Test-BizTalkAdapter {
         [string]
         $Source = 'BizTalk'
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if ($Source -eq 'Combined') {
         (Test-BizTalkAdapter -Name $Name -Source BizTalk) -and (Test-BizTalkAdapter -Name $Name -Source Registry)
     } else {

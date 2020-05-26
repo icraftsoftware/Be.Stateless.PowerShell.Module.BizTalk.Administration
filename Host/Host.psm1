@@ -44,6 +44,7 @@ function Assert-BizTalkHost {
         [string]
         $Name
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkHost -Name $Name)) {
         throw "Microsoft BizTalk Server Host '$Name' does not exist."
     }
@@ -85,6 +86,7 @@ function Get-BizTalkHost {
         [switch]
         $Detailed
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     $className = if ($Detailed) { 'MSBTS_HostSetting' } else { 'MSBTS_Host' }
     $filter = if (![string]::IsNullOrWhiteSpace($Name)) {
         "Name='$Name'"
@@ -160,6 +162,7 @@ function New-BizTalkHost {
         [switch]
         $Trusted
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHost -Name $Name) {
         Write-Information "`t $Type '$Name' host already exists."
     } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Creating $Type '$Name' host")) {
@@ -200,6 +203,7 @@ function Remove-BizTalkHost {
         [string]
         $Name
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHost -Name $Name) {
         $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
         if ($PsCmdlet.ShouldProcess("BizTalk Group", "Deleting '$Name' host")) {
@@ -243,6 +247,7 @@ function Test-BizTalkHost {
         [HostType]
         $Type
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     $btsHost = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
     if ($btsHost -and $PSBoundParameters.ContainsKey('Type')) {
         $btsHost.HostType -eq $Type
@@ -327,7 +332,6 @@ function Update-BizTalkHost {
             [string]
             $PerformedAction
         )
-
         $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
         if ($instance.$Property -ne $value -and $PsCmdlet.ShouldProcess("BizTalk Group", $ActionToPerform)) {
             Write-Verbose "`t $ActionToPerform..."
@@ -337,6 +341,7 @@ function Update-BizTalkHost {
         }
     }
 
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHost -Name $Name) {
         if ($PSBoundParameters.ContainsKey('x86')) {
             $subject = "'$Name' host's 32-bit only restriction"

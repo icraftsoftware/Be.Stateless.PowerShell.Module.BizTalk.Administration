@@ -36,6 +36,7 @@ function Get-BizTalkCatalog {
         [string]
         $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     try {
         $catalog = New-Object BtsCatalogExplorer
         $catalog.ConnectionString = "Server=$ManagementDatabaseServer;Database=$ManagementDatabaseName;Integrated Security=SSPI;"
@@ -63,6 +64,7 @@ function Get-BizTalkController {
         [string]
         $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
     )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     try {
         $controller = New-Object BizTalkOperations -ArgumentList $ManagementDatabaseServer, $ManagementDatabaseName
         $controller

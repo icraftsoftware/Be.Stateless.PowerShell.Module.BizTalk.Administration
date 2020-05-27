@@ -19,16 +19,38 @@
 Import-Module -Name $PSScriptRoot\..\HostInstance -Force
 
 Describe 'Test-BizTalkHostInstance' {
+    BeforeAll {
+        New-BizTalkHost -Name Test_Host_1 -Type InProcess -Group 'BizTalk Application Users'
+        New-BizTalkHostInstance -Name Test_Host_1 -User BTS_USER -Password 'p@ssw0rd' -Disabled
+    }
     InModuleScope HostInstance {
 
         Context 'Testing the existence of BizTalk Server Host Instances' {
             It 'Returns $true when the host instance exists.' {
                 Test-BizTalkHostInstance -Name BizTalkServerIsolatedHost | Should -BeTrue
             }
+            It 'Returns $true when the host instance exists and is disabled.' {
+                Test-BizTalkHostInstance -Name Test_Host_1 -IsDisabled | Should -BeTrue
+            }
+            It 'Returns $true when the host instance exists, is stopped, and is disabled.' {
+                Test-BizTalkHostInstance -Name Test_Host_1 -IsDisabled -IsStopped | Should -BeTrue
+            }
+            It 'Returns $true when the host instance exists and is started.' {
+                Test-BizTalkHostInstance -Name BizTalkServerApplication -IsStarted | Should -BeTrue
+            }
+            It 'Returns $false when the host instance exists, is started but is not disabled.' {
+                Test-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled -IsStarted | Should -BeFalse
+            }
+            It 'Returns $false when the host instance exists and is not stopped.' {
+                Test-BizTalkHostInstance -Name BizTalkServerApplication -IsStopped | Should -BeFalse
+            }
             It 'Returns $false when the host instance does not exist.' {
                 Test-BizTalkHostInstance -Name Inexistent-Host | Should -BeFalse
             }
         }
 
+    }
+    AfterAll {
+        Remove-BizTalkHost -Name Test_Host_1
     }
 }

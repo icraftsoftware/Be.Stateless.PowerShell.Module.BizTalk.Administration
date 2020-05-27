@@ -29,11 +29,11 @@ enum Direction {
 .DESCRIPTION
     Gets information Microsoft BizTalk Server Adapter Handlers.
 .PARAMETER Adapter
-    The name of the Microsoft BizTalk Server Adapter to get.
+    The adapter name of the Microsoft BizTalk Server Adapter Handlers.
 .PARAMETER Host
-    The name of the Microsoft BizTalk Server Host for which to get the Adapter Handlers.
+    The host name of the Microsoft BizTalk Server Host Handlers.
 .PARAMETER Direction
-    The direction of the Microsoft BizTalk Server Adapter Handlers to get.
+    The direction of the Microsoft BizTalk Server Adapter Handlers.
 .OUTPUTS
     Returns information about Microsoft BizTalk Server Adapter Handlers.
 .EXAMPLE
@@ -90,15 +90,15 @@ function Get-BizTalkHandler {
 .SYNOPSIS
     Creates a Microsoft BizTalk Server Adapter Handler.
 .DESCRIPTION
-    Creates and configures a Microsoft BizTalk Server Adapter Handler.
+    Creates a Microsoft BizTalk Server Adapter Handler.
 .PARAMETER Adapter
-    The name of the adapter for which to create a Microsoft BizTalk Server handler.
+    The adapter name of the Microsoft BizTalk Server Adapter Handler.
 .PARAMETER Host
-    The name of the host that will run the Microsoft BizTalk Server handler.
+    The host name of the Microsoft BizTalk Server Host Handler.
 .PARAMETER Direction
-    The diretion of the Microsoft BizTalk Server handler to be created, either Receive or Send.
+    The direction of the Microsoft BizTalk Server Adapter Handler.
 .PARAMETER Default
-    Whether the Microsoft BizTalk Server handler to be created will be the default Adapter Handler.
+    Whether the Microsoft BizTalk Server Adapter Handler to be created will be the default Adapter Handler.
 .EXAMPLE
     PS> New-BizTalkHandler -Adapter FILE -Host BizTalkServerApplication -Direction Receive
 .LINK
@@ -131,28 +131,28 @@ function New-BizTalkHandler {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHandler -Adapter $Adapter -Host $Host -Direction $Direction) {
-        Write-Information "`t $Direction $Adapter handler for '$Host' host already exists."
-    } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Creating $Direction $Adapter handler for '$Host' host")) {
-        Write-Verbose "`t Creating $Direction $Adapter handler for '$Host' host..."
+        Write-Information "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has already been created."
+    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Creating $Direction '$Adapter' handler for '$Host' host")) {
+        Write-Information "`t Creating Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host..."
         $className = Get-HandlerCimClassName -Direction $Direction
         $properties = @{ AdapterName = $Adapter ; HostName = $Host }
         if ($Direction -eq 'Send' -and $Default.IsPresent) { $properties.IsDefault = [bool]$Default }
         New-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName $className -Property $properties | Out-Null
-        Write-Information "`t $Direction $Adapter handler for '$Host' host has been created."
+        Write-Information "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has been created."
     }
 }
 
 <#
 .SYNOPSIS
-    Removes a Microsoft BizTalk Server handler.
+    Removes a Microsoft BizTalk Server Adapter Handler.
 .DESCRIPTION
-    Removes a Microsoft BizTalk Server handler.
+    Removes a Microsoft BizTalk Server Adapter Handler.
 .PARAMETER Adapter
-    The name of the adapter for which a Microsoft BizTalk Server handler has to be removed.
+    The adapter name of the Microsoft BizTalk Server Adapter Handler.
 .PARAMETER Host
-    The name of the host that runs the Microsoft BizTalk Server handler to be removed.
+    The host name of the Microsoft BizTalk Server Host Handler.
 .PARAMETER Direction
-    The diretion of the Microsoft BizTalk Server handler to be removed, either Receive or Send.
+    The direction of the Microsoft BizTalk Server Adapter Handler.
 .EXAMPLE
     PS> Remove-BizTalkHandler -Adapter FILE -Host BizTalkServerApplication -Direction Receive
 .NOTES
@@ -177,15 +177,15 @@ function Remove-BizTalkHandler {
         $Direction
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-    if (-not (Test-BizTalkHandler -Adapter $Adapter -Host $Host -Direction $Direction)) {
-        Write-Information "`t $Direction $Adapter handler for '$Host' host does not exist."
-    } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Removing $Direction $Adapter handler for '$Host' host")) {
-        Write-Verbose "`t Removing $Direction $Adapter handler for '$Host' host..."
+    if (-not(Test-BizTalkHandler -Adapter $Adapter -Host $Host -Direction $Direction)) {
+        Write-Information "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has already been removed."
+    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Removing $Direction '$Adapter' handler for '$Host' host")) {
+        Write-Information "`t Removing Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host..."
         $className = Get-HandlerCimClassName -Direction $Direction
-        # TODO fail if try to remove default send handler
+        # TODO will fail if try to remove default send handler
         $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter "AdapterName='$Adapter' and HostName='$Host'"
         Remove-CimInstance -ErrorAction Stop -InputObject $instance
-        Write-Information "`t $Direction $Adapter handler for '$Host' host has been deleted."
+        Write-Information "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has been removed."
     }
 }
 
@@ -195,11 +195,11 @@ function Remove-BizTalkHandler {
 .DESCRIPTION
     This command will return $true if the Microsoft BizTalk Server Adapter Handler exists; $false otherwise.
 .PARAMETER Adapter
-    The name of the adapter for which the existence of a Microsoft BizTalk Server handler is tested.
+    The adapter name of the Microsoft BizTalk Server Adapter Handler.
 .PARAMETER Host
-    The name of the host that runs the Microsoft BizTalk Server handler whose existence is tested.
+    The host name of the Microsoft BizTalk Server Host Handler.
 .PARAMETER Direction
-    The diretion of the Microsoft BizTalk Server handler whose existence is to be tested, either Receive or Send.
+    The direction of the Microsoft BizTalk Server Adapter Handler.
 .OUTPUTS
     $true if the Microsoft BizTalk Server handler exists; $false otherwise.
 .EXAMPLE

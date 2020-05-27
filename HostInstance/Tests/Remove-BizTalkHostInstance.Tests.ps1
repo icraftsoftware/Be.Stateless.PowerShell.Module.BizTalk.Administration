@@ -28,33 +28,35 @@ Describe 'Remove-BizTalkHostInstance' {
     }
     InModuleScope HostInstance {
 
-        Context 'When the host instance already exists' {
+        Context 'When the host instance exists' {
             Mock -CommandName Write-Information -ModuleName HostInstance
-            It 'Deletes the Isolated host instance.' {
+            It 'Removes the Isolated host instance.' {
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeTrue
                 { Remove-BizTalkHostInstance -Name Test_Host_1 -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeFalse
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has been deleted." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Removing Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has been removed\." }
             }
-            It 'Deletes the InProcess host instance even though it is started.' {
-                Test-BizTalkHostInstance -Name Test_Host_2 | Should -BeTrue
+            It 'Removes the InProcess host instance even though it is started.' {
+                Test-BizTalkHostInstance -Name Test_Host_2 -IsStarted | Should -BeTrue
                 { Remove-BizTalkHostInstance -Name Test_Host_2 -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_2 | Should -BeFalse
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server has been deleted." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Removing Microsoft BizTalk Server 'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server has been removed\." }
             }
         }
 
-        Context 'When the host instance does not already exist' {
+        Context 'When the host instance does not exist' {
             Mock -CommandName Write-Information -ModuleName HostInstance
-            It 'Skips the host instance deletion.' {
+            It 'Skips the host instance removal.' {
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeFalse
                 { Remove-BizTalkHostInstance -Name Test_Host_1 -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server does not exist." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has already been removed\." }
             }
         }
 
         Context 'When the host instance has been partially created' {
-            It 'Deletes what has been created.' {
+            It 'Removes what has been created.' {
                 $serverHostInstanceClass = Get-CimClass -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_ServerHost
                 $serverHostInstance = New-CimInstance -CimClass $serverHostInstanceClass -ClientOnly -Property @{
                     ServerName           = $env:COMPUTERNAME

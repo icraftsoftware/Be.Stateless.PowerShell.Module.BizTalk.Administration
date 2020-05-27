@@ -30,7 +30,8 @@ Describe 'New-BizTalkHandler' {
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeFalse
                 { New-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeTrue
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Send FILE handler for ''Test_Host'' host has been created.' }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Creating Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host\.\.\.' }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host has been created\.' }
             }
         }
 
@@ -39,7 +40,7 @@ Describe 'New-BizTalkHandler' {
             It 'Skips the BizTalk Server Handler creation.' {
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeTrue
                 { New-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Send FILE handler for ''Test_Host'' host already exists.' }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host has already been created\.' }
             }
         }
 

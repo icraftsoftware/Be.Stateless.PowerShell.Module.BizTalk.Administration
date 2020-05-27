@@ -30,10 +30,9 @@ Set-StrictMode -Version Latest
 .PARAMETER Name
     The name of the Microsoft BizTalk Server Application.
 .PARAMETER ManagementDatabaseServer
-    The name of the SQL server hosting the management database; it is filled in by default with information found
-    in the registry.
+    The name of the SQL server hosting the management database; it defaults to MSBTS_GroupSetting.MgmtDbServerName.
 .PARAMETER ManagementDatabaseName
-    The name of the management database; it is filled in by default with information found in the registry.
+    The name of the management database;  it defaults to MSBTS_GroupSetting.MgmtDbName.
 .OUTPUTS
     Returns the Microsoft BizTalk Server Applications.
 .EXAMPLE
@@ -74,7 +73,7 @@ function Get-BizTalkApplication {
 }
 
 function New-BizTalkApplication {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     [OutputType([void])]
     param(
         [Parameter(Position = 0, Mandatory = $true)]
@@ -88,11 +87,17 @@ function New-BizTalkApplication {
         $Description
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-    Invoke-Tool -Command { BTSTask AddApp -ApplicationName:"$Name" -Description:"$Description" }
+    if (Test-BizTalkApplication -Name $Name) {
+        Write-Information "`t Microsoft BizTalk Server Application '$Name' has already been created."
+    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Creating application '$Name'")) {
+        Write-Information "`t Creating Microsoft BizTalk Server Application '$Name'..."
+        Invoke-Tool -Command { BTSTask AddApp -ApplicationName:"$Name" -Description:"$Description" }
+        Write-Information "`t Microsoft BizTalk Server Application '$Name' has been created."
+    }
 }
 
 function Remove-BizTalkApplication {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     [OutputType([void])]
     param(
         [Parameter(Position = 0, Mandatory = $true)]
@@ -101,7 +106,13 @@ function Remove-BizTalkApplication {
         $Name
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-    Invoke-Tool -Command { BTSTask RemoveApp -ApplicationName:"$Name" }
+    if (-not(Test-BizTalkApplication -Name $Name)) {
+        Write-Information "`t Microsoft BizTalk Server Application '$Name' has already been removed."
+    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Removing application '$Name'")) {
+        Write-Information "`t Removing Microsoft BizTalk Server Application '$Name'..."
+        Invoke-Tool -Command { BTSTask RemoveApp -ApplicationName:"$Name" }
+        Write-Information "`t Microsoft BizTalk Server Application '$Name' has been removed."
+    }
 }
 
 function Start-BizTalkApplication {
@@ -221,10 +232,9 @@ function Stop-BizTalkApplication {
 .PARAMETER Name
     The name of the Microsoft BizTalk Server Application.
 .PARAMETER ManagementDatabaseServer
-    The name of the SQL server hosting the management database; it is filled in by default with information found
-    in the registry.
+    The name of the SQL server hosting the management database; it defaults to MSBTS_GroupSetting.MgmtDbServerName.
 .PARAMETER ManagementDatabaseName
-    The name of the management database; it is filled in by default with information found in the registry.
+    The name of the management database;  it defaults to MSBTS_GroupSetting.MgmtDbName.
 .OUTPUTS
     Returns $true if the Microsoft BizTalk Server Application exists; $false otherwise.
 .EXAMPLE

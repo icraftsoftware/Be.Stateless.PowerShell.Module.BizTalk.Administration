@@ -27,14 +27,14 @@ Describe 'Enable-BizTalkHostInstance' {
 
         Context 'When Microsoft BizTalk Server Host Instance exists.' {
             It 'Enables the host instance to start when not already enabled.' {
-                Get-BizTalkHostInstance -Name Test_Host | Select-Object -ExpandProperty IsDisabled | Should -BeTrue
+                Test-BizTalkHostInstance -Name Test_Host -IsDisabled | Should -BeTrue
                 Enable-BizTalkHostInstance -Name Test_Host
-                Get-BizTalkHostInstance -Name Test_Host | Select-Object -ExpandProperty IsDisabled | Should -BeFalse
+                Test-BizTalkHostInstance -Name Test_Host -IsDisabled | Should -BeFalse
             }
             It 'Enables the host instance to start even when already enabled.' {
-                Get-BizTalkHostInstance -Name Test_Host | Select-Object -ExpandProperty IsDisabled | Should -BeFalse
+                Test-BizTalkHostInstance -Name Test_Host -IsDisabled | Should -BeFalse
                 Enable-BizTalkHostInstance -Name Test_Host
-                Get-BizTalkHostInstance -Name Test_Host | Select-Object -ExpandProperty IsDisabled | Should -BeFalse
+                Test-BizTalkHostInstance -Name Test_Host -IsDisabled | Should -BeFalse
             }
         }
 

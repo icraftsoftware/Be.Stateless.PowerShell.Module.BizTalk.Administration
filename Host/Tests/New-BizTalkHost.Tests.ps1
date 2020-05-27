@@ -29,7 +29,8 @@ Describe 'New-BizTalkHost' {
                 Test-BizTalkHost -Name Test_Host | Should -BeFalse
                 { New-BizTalkHost -Name Test_Host -Type InProcess -Group 'BizTalk Application Users' -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHost -Name Test_Host | Should -BeTrue
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Host -ParameterFilter { $MessageData -match 'InProcess ''Test_Host'' host has been created.' }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Host -ParameterFilter { $MessageData -match 'Creating Microsoft BizTalk Server InProcess ''Test_Host'' host with ''BizTalk Application Users'' Windows Domain Group\.\.\.' }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Host -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server InProcess ''Test_Host'' host has been created\.' }
             }
         }
 
@@ -38,7 +39,7 @@ Describe 'New-BizTalkHost' {
             It 'Skips BizTalk Server Host creation.' {
                 Test-BizTalkHost -Name BizTalkServerApplication | Should -BeTrue
                 { New-BizTalkHost -Name BizTalkServerApplication -Type InProcess -Group 'BizTalk Application Users' -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Host -ParameterFilter { $MessageData -match 'InProcess ''BizTalkServerApplication'' host already exists.' }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Host -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server InProcess ''BizTalkServerApplication'' host has already been created\.' }
             }
         }
 

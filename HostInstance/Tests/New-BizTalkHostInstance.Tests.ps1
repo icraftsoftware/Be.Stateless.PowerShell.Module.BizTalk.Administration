@@ -34,26 +34,25 @@ Describe 'New-BizTalkHostInstance' {
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeFalse
                 { New-BizTalkHostInstance -Name Test_Host_1 -User BTS_USER -Password 'p@ssw0rd' -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeTrue
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has been created." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Creating Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has been created\." }
             }
             It 'Creates a new InProcess host instance and starts it.' {
                 Test-BizTalkHostInstance -Name Test_Host_2 | Should -BeFalse
                 { New-BizTalkHostInstance -Name Test_Host_2 -User BTS_USER -Password 'p@ssw0rd' -Started } | Should -Not -Throw
-                Test-BizTalkHostInstance -Name Test_Host_2 | Should -BeTrue
-                # https://docs.microsoft.com/en-us/biztalk/core/technical-reference/msbts-hostinstance-servicestate-property-wmi
-                Get-BizTalkHostInstance Test_Host_2 | Select-Object -ExpandProperty ServiceState | Should -Be 4
+                Test-BizTalkHostInstance -Name Test_Host_2 -IsStarted | Should -BeTrue
             }
             It 'Creates a new InProcess host instance and disables it from starting.' {
                 Test-BizTalkHostInstance -Name Test_Host_3 | Should -BeFalse
                 { New-BizTalkHostInstance -Name Test_Host_3 -User BTS_USER -Password 'p@ssw0rd' -Disabled } | Should -Not -Throw
-                Test-BizTalkHostInstance -Name Test_Host_3 | Should -BeTrue
-                Get-BizTalkHostInstance -Name Test_Host_3 | Select-Object -ExpandProperty IsDisabled | Should -BeTrue
+                Test-BizTalkHostInstance -Name Test_Host_3 -IsDisabled | Should -BeTrue
             }
             It 'Creates a new Isolated host instance' {
                 Test-BizTalkHostInstance -Name Test_Host_4 | Should -BeFalse
                 { New-BizTalkHostInstance -Name Test_Host_4 -User BTS_USER -Password 'p@ssw0rd' -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_4 | Should -BeTrue
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "'Test_Host_4' Host Instance on '$($env:COMPUTERNAME)' server has been created." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Creating Microsoft BizTalk Server 'Test_Host_4' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_4' Host Instance on '$($env:COMPUTERNAME)' server has been created\." }
             }
         }
 
@@ -62,7 +61,7 @@ Describe 'New-BizTalkHostInstance' {
             It 'Skips the host instance creation.' {
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeTrue
                 { New-BizTalkHostInstance -Name Test_Host_1 -User BTS_USER -Password 'p@ssw0rd' -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server already exists." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has already been created\." }
             }
         }
 

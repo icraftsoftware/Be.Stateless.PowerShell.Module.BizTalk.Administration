@@ -30,22 +30,21 @@ Describe 'Start-BizTalkHostInstance' {
         Context 'When the host instance exists' {
             Mock -CommandName Write-Information -ModuleName HostInstance
             It 'Starts the host instance.' {
-                Test-BizTalkHostInstance -Name Test_Host_2 | Should -BeTrue
-                # https://docs.microsoft.com/en-us/biztalk/core/technical-reference/msbts-hostinstance-servicestate-property-wmi
-                Get-BizTalkHostInstance Test_Host_2 | Select-Object -ExpandProperty ServiceState | Should -Be 1
+                Test-BizTalkHostInstance -Name Test_Host_2 -IsStopped | Should -BeTrue
                 { Start-BizTalkHostInstance -Name Test_Host_2 } | Should -Not -Throw
-                Get-BizTalkHostInstance Test_Host_2 | Select-Object -ExpandProperty ServiceState | Should -Be 4
+                Test-BizTalkHostInstance -Name Test_Host_2 -IsStarted | Should -BeTrue
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server is being started\.\.\." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server has been started\." }
             }
             It 'Starts the host instance irrelevantly of whether it is already started.' {
-                Test-BizTalkHostInstance -Name Test_Host_2 | Should -BeTrue
-                Get-BizTalkHostInstance Test_Host_2 | Select-Object -ExpandProperty ServiceState | Should -Be 4
+                Test-BizTalkHostInstance -Name Test_Host_2 -IsStarted | Should -BeTrue
                 { Start-BizTalkHostInstance -Name Test_Host_2 } | Should -Not -Throw
-                Get-BizTalkHostInstance Test_Host_2 | Select-Object -ExpandProperty ServiceState | Should -Be 4
+                Test-BizTalkHostInstance -Name Test_Host_2 -IsStarted | Should -BeTrue
             }
             It 'Skips starting an Isolated host instance.' {
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeTrue
                 { Start-BizTalkHostInstance -Name Test_Host_1 -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server is an Isolated Host and cannot be started." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server is an Isolated Host and can neither be started nor stopped\." }
             }
         }
 
@@ -54,7 +53,7 @@ Describe 'Start-BizTalkHostInstance' {
             It 'Skips starting the host instance.' {
                 Test-BizTalkHostInstance -Name Test_Host_3 | Should -BeFalse
                 { Start-BizTalkHostInstance -Name Test_Host_3 -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "'Test_Host_3' Host Instance on '$($env:COMPUTERNAME)' server does not exist." }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_3' Host Instance on '$($env:COMPUTERNAME)' server does not exist\." }
             }
         }
 

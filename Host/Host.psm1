@@ -32,6 +32,8 @@ enum HostType {
     The name of the Microsoft BizTalk Server Host.
 .EXAMPLE
     PS> Assert-BizTalkHost -Name 'Transmit Host'
+.EXAMPLE
+    PS> Assert-BizTalkHost -Name 'Transmit Host' -Verbose
 .NOTES
     © 2020 be.stateless.
 #>
@@ -55,14 +57,13 @@ function Assert-BizTalkHost {
 .SYNOPSIS
     Gets information about the Microsoft BizTalk Server Hosts.
 .DESCRIPTION
-    Gets either summary or detailed information about either one or all of the Microsoft BizTalk Server Hosts.
+    Gets either summary or detailed information about the Microsoft BizTalk Server Hosts.
 .PARAMETER Name
     The name of the Microsoft BizTalk Server Host.
 .PARAMETER Detailed
-    Indicates that this cmdlet gets detailed information about eihter one or all of the Microsoft BizTalk Server
-    hosts.
+    To get detailed, instead of summary, information about the Microsoft BizTalk Server Hosts.
 .OUTPUTS
-    Returns either summary or detailed information about the Microsoft BizTalk Server Hosts.
+    Returns information about the Microsoft BizTalk Server Hosts.
 .EXAMPLE
     PS> Get-BizTalkHost
 .EXAMPLE
@@ -104,15 +105,15 @@ function Get-BizTalkHost {
 .PARAMETER Type
     The type of the Microsoft BizTalk Server Host, either InProcess or Isolated.
 .PARAMETER Group
-    The Windows group used to control access of this host.
+    The Windows Domain Group used to control access of this host.
 .PARAMETER x86
     Whether instances of this host will be 32-bit only processes.
 .PARAMETER Default
-    Whether this host is to be the default host in the Microsoft BizTalk Server group or not.
+    Whether this host is to be the default host in the Microsoft BizTalk Server Group or not.
 .PARAMETER Tracking
-    Wheter to enable the BizTalk Tracking component for this host or not.
+    Wheter to enable the Microsoft BizTalk Server Tracking component for this host or not.
 .PARAMETER Trusted
-    Whether BizTalk should trust this host or not.
+    Whether Microsoft BizTalk Server should trust this host or not.
 .EXAMPLE
     PS> New-BizTalkHost -Name 'Transmit Host' -Type InProcess -Group 'BizTalk Application Users'
 .EXAMPLE
@@ -164,9 +165,9 @@ function New-BizTalkHost {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHost -Name $Name) {
-        Write-Information "`t $Type '$Name' host already exists."
-    } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Creating $Type '$Name' host")) {
-        Write-Verbose "`t Creating $Type '$Name' host with '$Group' Windows group..."
+        Write-Information "`t Microsoft BizTalk Server $Type '$Name' host has already been created."
+    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Creating $Type '$Name' host")) {
+        Write-Information "`t Creating Microsoft BizTalk Server $Type '$Name' host with '$Group' Windows Domain Group..."
         $instanceClass = Get-CimClass -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting
         $instance = New-CimInstance -ErrorAction Stop -CimClass $instanceClass -Property @{
             Name            = $Name
@@ -178,7 +179,7 @@ function New-BizTalkHost {
             AuthTrusted     = [bool]$Trusted
         }
         Set-CimInstance -ErrorAction Stop -InputObject $instance
-        Write-Information "`t $Type '$Name' host has been created."
+        Write-Information "`t Microsoft BizTalk Server $Type '$Name' host has been created."
     }
 }
 
@@ -204,14 +205,13 @@ function Remove-BizTalkHost {
         $Name
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-    if (Test-BizTalkHost -Name $Name) {
+    if (-not(Test-BizTalkHost -Name $Name)) {
+        Write-Information "`t Microsoft BizTalk Server '$Name' host has already been removed."
+    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Removing '$Name' host")) {
+        Write-Information "`t Removing Microsoft BizTalk Server '$Name' host..."
         $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
-        if ($PsCmdlet.ShouldProcess("BizTalk Group", "Deleting '$Name' host")) {
-            Remove-CimInstance -ErrorAction Stop -InputObject $instance
-            Write-Information "`t '$Name' host has been deleted."
-        }
-    } else {
-        Write-Information "`t '$Name' host does not exist."
+        Remove-CimInstance -ErrorAction Stop -InputObject $instance
+        Write-Information "`t Microsoft BizTalk Server '$Name' host has been removed."
     }
 }
 
@@ -249,11 +249,7 @@ function Test-BizTalkHost {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     $btsHost = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
-    if ($btsHost -and $PSBoundParameters.ContainsKey('Type')) {
-        $btsHost.HostType -eq $Type
-    } else {
-        [bool]$btsHost
-    }
+    [bool]$btsHost -and (-not $PSBoundParameters.ContainsKey('Type') -or $btsHost.HostType -eq $Type)
 }
 
 <#
@@ -266,11 +262,11 @@ function Test-BizTalkHost {
 .PARAMETER x86
     Whether instances of this host will be 32-bit only processes.
 .PARAMETER Default
-    Whether this host is to be the default host in the BizTalk group or not.
+    Whether this host is to be the default host in the Microsoft BizTalk Server group or not.
 .PARAMETER Tracking
-    Wheter to enable the BizTalk Tracking component for this host or not.
+    Wheter to enable the Microsoft BizTalk Server Tracking component for this host or not.
 .PARAMETER Trusted
-    Whether BizTalk should trust this host or not.
+    Whether Microsoft BizTalk Server should trust this host or not.
 .EXAMPLE
     PS> Update-BizTalkHost -Name 'Transmit Host' -x86 -Verbose
     With the -Verbose switch, this command will confirm this process is 32 bit.
@@ -333,11 +329,11 @@ function Update-BizTalkHost {
             $PerformedAction
         )
         $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostSetting -Filter "Name='$Name'"
-        if ($instance.$Property -ne $value -and $PsCmdlet.ShouldProcess("BizTalk Group", $ActionToPerform)) {
-            Write-Verbose "`t $ActionToPerform..."
+        if ($instance.$Property -ne $value -and $PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", $ActionToPerform)) {
+            Write-Information "`t $ActionToPerform..."
             $instance.$Property = $Value
             Set-CimInstance -ErrorAction Stop -InputObject $instance
-            Write-Verbose "`t $PerformedAction."
+            Write-Information "`t $PerformedAction."
         }
     }
 
@@ -352,8 +348,8 @@ function Update-BizTalkHost {
 
         if ($Default.IsPresent -and -not $btsHost.IsDefault) {
             Set-BizTalkHostProperty -Name $Name -Property IsDefault -Value $Default `
-                -ActionToPerform "Setting '$Name' host as default BizTalk Group host" `
-                -PerformedAction "'$Name' host has been set as default BizTalk Group host"
+                -ActionToPerform "Setting '$Name' host as default Microsoft BizTalk Server Group host" `
+                -PerformedAction "'$Name' host has been set as default Microsoft BizTalk Server Group host"
         }
 
         if ($PSBoundParameters.ContainsKey('Tracking')) {
@@ -370,6 +366,6 @@ function Update-BizTalkHost {
                 -PerformedAction ("{0} has been {1}" -f $Subject, (@('enabled', 'disabled')[!$Trusted]))
         }
     } else {
-        Write-Information "`t '$Name' host does not exist."
+        Write-Information "`t Microsoft BizTalk Server '$Name' host does not exist."
     }
 }

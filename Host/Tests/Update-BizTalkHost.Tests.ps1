@@ -45,7 +45,7 @@ Describe 'Update-BizTalkHost' {
             }
         }
 
-        Context 'When BizTalk Server Host does not yet exist' {
+        Context 'When BizTalk Server Host does not exist' {
             Mock -CommandName Write-Information -ModuleName Host
             It 'Skips BizTalk Server Host update.' {
                 Test-BizTalkHost -Name Test_Host_2 | Should -BeFalse

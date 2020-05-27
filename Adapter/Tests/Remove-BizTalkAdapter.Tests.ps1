@@ -22,7 +22,7 @@ Describe 'Remove-BizTalkAdapter' {
     InModuleScope Adapter {
 
         Context 'When adapter is registered' {
-            It 'Unregisters the adapter.' {
+            It 'Removes the adapter.' {
                 $name = 'WCF-OracleEBS'
                 Test-BizTalkAdapter -Name $name | Should -BeFalse
                 { New-BizTalkAdapter -Name $name } | Should -Not -Throw
@@ -34,11 +34,11 @@ Describe 'Remove-BizTalkAdapter' {
 
         Context 'When adapter is not registered' {
             Mock -CommandName Write-Information -ModuleName Adapter
-            It 'Skips the adapter unregistration.' {
+            It 'Skips the adapter removal.' {
                 $name = 'WCF-OracleEBS'
                 Test-BizTalkAdapter -Name $name | Should -BeFalse
                 { Remove-BizTalkAdapter -Name $name -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Adapter -ParameterFilter { $MessageData -match "$name adapter has not been registered in Microsoft BizTalk Server\.$" }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Adapter -ParameterFilter { $MessageData -match "Microsoft BizTalk Server '$name' adapter has already been removed\.$" }
             }
         }
 

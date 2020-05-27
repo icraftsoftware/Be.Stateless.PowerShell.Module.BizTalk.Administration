@@ -37,7 +37,7 @@ Describe 'New-BizTalkAdapter' {
             It 'Skips the adapter registration.' {
                 Test-BizTalkAdapter -Name FILE | Should -BeTrue
                 { New-BizTalkAdapter -Name FILE -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Adapter -ParameterFilter { $MessageData -match 'FILE adapter has already been registered in Microsoft BizTalk Server.$' }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Adapter -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server ''FILE'' adapter has already been created\.$' }
             }
         }
 
@@ -45,13 +45,13 @@ Describe 'New-BizTalkAdapter' {
             It 'Throws because its MgmtCLSID cannot be discovered.' {
                 $name = 'WCF-OracleEBS-1'
                 Test-BizTalkAdapter -Name $name | Should -BeFalse
-                { New-BizTalkAdapter -Name $name } | Should -Throw -ExpectedMessage "$name Adapter's MgmtCLSID could not be resolved on the local machine. The $name adapter might not be installed on $($env:COMPUTERNAME)."
+                { New-BizTalkAdapter -Name $name } | Should -Throw -ExpectedMessage "'$name' adapter's MgmtCLSID could not be resolved on the local machine. The '$name' adapter might not be installed on $($env:COMPUTERNAME)."
             }
             It 'Throws because its MgmtCLSID cannot be forced.' {
                 $name = 'WCF-OracleEBS-2'
                 $mgmtCLSID = '{5090c39c-6583-4f9c-be28-e3f4a64a4fa1}'
                 Test-BizTalkAdapter -Name $name | Should -BeFalse
-                { New-BizTalkAdapter -Name $name -MgmtCLSID $mgmtCLSID } | Should -Throw -ExpectedMessage "Adapter's MgmtCLSID $mgmtCLSID does not exist on the local machine. The $name adapter might not be installed on $($env:COMPUTERNAME)."
+                { New-BizTalkAdapter -Name $name -MgmtCLSID $mgmtCLSID } | Should -Throw -ExpectedMessage "'$name' adapter's MgmtCLSID $mgmtCLSID does not exist on the local machine. The '$name' adapter might not be installed on $($env:COMPUTERNAME)."
             }
         }
 

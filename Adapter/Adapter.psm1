@@ -28,8 +28,8 @@ Set-StrictMode -Version Latest
     The name of the Microsoft BizTalk Server Adapter.
 .PARAMETER Source
     The place where to look for the Microsoft BizTalk Server Adapters: either among those configured and available
-    in Microsoft BizTalk Server, or among those registered in the local machine's COM registry, or as a
-    combination of both sources. It defaults to BizTalk.
+    in Microsoft BizTalk Server, or among those registered in the local machine's COM registry, or as a combination
+    of both sources. It defaults to BizTalk.
 .OUTPUTS
     Returns information about the Microsoft BizTalk Server Adapters.
 .EXAMPLE
@@ -116,7 +116,7 @@ function Get-BizTalkAdapter {
         if ([string]::IsNullOrWhiteSpace($Name)) {
             Get-BizTalkAdapterRegistryKey | ForEach-Object -Process { ConvertTo-BizTalkAdapterObject -Key $_ }
         } else {
-            # speed up registry lookup by 1st looking MgmtCLSID in BizTalk
+            # speed up registry lookup by 1st looking up the MgmtCLSID in BizTalk
             $mgmtCLSID = Get-BizTalkAdapter -Name $Name -Source BizTalk | Select-Object -ExpandProperty MgmtCLSID
             if ($null -ne $mgmtCLSID) {
                 Get-BizTalkAdapterRegistryKey -MgmtCLSID $mgmtCLSID |
@@ -150,17 +150,17 @@ function Get-BizTalkAdapter {
 
 <#
 .SYNOPSIS
-    Register an adapter in Microsoft BizTalk Server.
+    Creates a Microsoft BizTalk Server Adapter.
 .DESCRIPTION
-    Register an adapter in Microsoft BizTalk Server. The adapter to be registerd should be locally installed in order
-    for its registration to succeed unless the MgmtCLSID is forced.
+    Creates a Microsoft BizTalk Server Adapter. The adapter to be created should be locally installed in order for its
+    creation to succeed.
 .PARAMETER Name
-    The name of the Microsoft BizTalk Server Adapter to register.
+    The name of the Microsoft BizTalk Server Adapter to create.
 .PARAMETER MgmtCLSID
-    The MgmtCLSID of the Microsoft BizTalk Server Adapter to register. If the MgmtCLSID argument is omitted, it
-    will be looked up in the local machine's COM registry.
+    The MgmtCLSID of the Microsoft BizTalk Server Adapter to create. If the MgmtCLSID argument is omitted, it will
+    be looked up in the local machine's COM registry.
 .PARAMETER Comment
-    A descriptive comment of the Microsoft BizTalk Server Adapter to register.
+    A descriptive comment of the Microsoft BizTalk Server Adapter to create.
 .EXAMPLE
     PS> New-BizTalkAdapter -Name 'WCF-SQL'
 .EXAMPLE
@@ -193,15 +193,15 @@ function New-BizTalkAdapter {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkAdapter -Name $Name -Source BizTalk) {
-        Write-Information "`t $Name adapter has already been registered in Microsoft BizTalk Server."
-    } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Registering $Name adapter")) {
-        Write-Verbose "`t Registering $Name adapter in Microsoft BizTalk Server..."
+        Write-Information "`t Microsoft BizTalk Server '$Name' adapter has already been created."
+    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Creating '$Name' adapter")) {
+        Write-Information "`t Creating Microsoft BizTalk Server '$Name' adapter..."
         if ([string]::IsNullOrWhiteSpace($MgmtCLSID)) { $MgmtCLSID = Get-BizTalkAdapter -Name $Name -Source Registry | Select-Object -ExpandProperty MgmtCLSID }
         if ([string]::IsNullOrWhiteSpace($MgmtCLSID)) {
-            throw "$Name Adapter's MgmtCLSID could not be resolved on the local machine. The $Name adapter might not be installed on $($env:COMPUTERNAME)."
+            throw "'$Name' adapter's MgmtCLSID could not be resolved on the local machine. The '$Name' adapter might not be installed on $($env:COMPUTERNAME)."
         }
         if ($null -eq (Get-BizTalkAdapterRegistryKey -MgmtCLSID $mgmtCLSID)) {
-            throw "Adapter's MgmtCLSID $mgmtCLSID does not exist on the local machine. The $Name adapter might not be installed on $($env:COMPUTERNAME)."
+            throw "'$Name' adapter's MgmtCLSID $mgmtCLSID does not exist on the local machine. The '$Name' adapter might not be installed on $($env:COMPUTERNAME)."
         }
         $properties = @{
             Name      = $Name
@@ -210,17 +210,17 @@ function New-BizTalkAdapter {
         if (-not [string]::IsNullOrWhiteSpace($Comment)) { $properties.Comment = $Comment }
         $properties
         New-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Property $properties | Out-Null
-        Write-Verbose "`t $Name adapter in Microsoft BizTalk Server has been registered."
+        Write-Information "`t Microsoft BizTalk Server '$Name' adapter has been created."
     }
 }
 
 <#
 .SYNOPSIS
-    Unregister an adapter from Microsoft BizTalk Server.
+    Removes a Microsoft BizTalk Server Adapter.
 .DESCRIPTION
-    Unregister an adapter from Microsoft BizTalk Server.
+    Removes a Microsoft BizTalk Server Adapter.
 .PARAMETER Name
-    The name of the Microsoft BizTalk Server Adapter to unregister.
+    The name of the Microsoft BizTalk Server Adapter to remove.
 .EXAMPLE
     PS> Remove-BizTalkAdapter -Name 'WCF-SQL'
 .NOTES
@@ -237,13 +237,13 @@ function Remove-BizTalkAdapter {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkAdapter -Name $Name -Source BizTalk)) {
-        Write-Information "`t $Name adapter has not been registered in Microsoft BizTalk Server."
-    } elseif ($PsCmdlet.ShouldProcess("BizTalk Group", "Unregistering $Name adapter")) {
-        Write-Verbose "`t Unregistering $Name adapter from Microsoft BizTalk Server..."
+        Write-Information "`t Microsoft BizTalk Server '$Name' adapter has already been removed."
+    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Removing '$Name' adapter")) {
+        Write-Information "`t Removing Microsoft BizTalk Server '$Name' adapter..."
         $filter = if (![string]::IsNullOrWhiteSpace($Name)) { "Name='$Name'" }
         $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Filter $filter
         Remove-CimInstance -ErrorAction Stop -InputObject $instance
-        Write-Verbose "`t $Name adapter has been unregistered from Microsoft BizTalk Server."
+        Write-Information "`t Microsoft BizTalk Server '$Name' adapter has been removed."
     }
 }
 
@@ -255,7 +255,7 @@ function Remove-BizTalkAdapter {
     has to be tested for the combined sources, this command will return $true only if the Microsoft BizTalk Server
     adapter exists in both sources.
 .PARAMETER Name
-    The name of the Microsoft BizTalk Server Adapter.
+    The name of the Microsoft BizTalk Server Adapter whose availability or installation has to be tested.
 .PARAMETER Source
     The place where to look for the Microsoft BizTalk Server Adapter: either among those configured and available
     in Microsoft BizTalk Server, or among those registered in the local machine's COM registry, or as a

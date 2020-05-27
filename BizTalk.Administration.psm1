@@ -37,8 +37,8 @@ function Assert-BizTalkServer {
     param()
 
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-    if (-not(Test-BizTalkServer)) { throw "Microsoft BizTalk Server is not installed locally." }
-    Write-Verbose "Microsoft BizTalk Server is installed locally."
+    if (-not(Test-BizTalkServer)) { throw 'Microsoft BizTalk Server is not installed locally.' }
+    Write-Verbose 'Microsoft BizTalk Server is installed locally.'
 }
 
 <#

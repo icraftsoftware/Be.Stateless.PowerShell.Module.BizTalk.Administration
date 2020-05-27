@@ -25,7 +25,7 @@ enum HostType {
 
 <#
 .SYNOPSIS
-    Ensures a Microsoft BizTalk Server Host exists.
+    Asserts the existence of a Microsoft BizTalk Server Host.
 .DESCRIPTION
     This command will throw if the Microsoft BizTalk Server Host does not exist and will silently complete otherwise.
 .PARAMETER Name
@@ -47,7 +47,7 @@ function Assert-BizTalkHost {
         $Name
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
-    if (-not(Test-BizTalkHost -Name $Name)) {
+    if (-not(Test-BizTalkHost @PSBoundParameters)) {
         throw "Microsoft BizTalk Server Host '$Name' does not exist."
     }
     Write-Verbose "Microsoft BizTalk Server Host '$Name' exists."

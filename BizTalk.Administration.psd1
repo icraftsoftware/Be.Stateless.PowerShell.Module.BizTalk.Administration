@@ -18,7 +18,7 @@
 
 @{
     RootModule            = 'BizTalk.Administration.psm1'
-    ModuleVersion         = '1.1.0.0'
+    ModuleVersion         = '1.1.1.0'
     GUID                  = 'de802b43-c7a6-4580-a34b-ac805bbf813e'
     Author                = 'François Chabot'
     CompanyName           = 'be.stateless'
@@ -48,11 +48,13 @@
         'Assert-BizTalkServer',
         'Test-BizTalkServer',
         # Adapter.psm1
+        'Assert-BizTalkAdapter',
         'Get-BizTalkAdapter',
         'New-BizTalkAdapter',
         'Remove-BizTalkAdapter',
         'Test-BizTalkAdapter',
         # Application.psm1
+        'Assert-BizTalkApplication',
         'Get-BizTalkApplication',
         'New-BizTalkApplication',
         'Remove-BizTalkApplication',
@@ -62,6 +64,7 @@
         # Group.psm1
         'Get-BizTalGroupSettings',
         # Handler.psm1
+        'Assert-BizTalkHandler',
         'Get-BizTalkHandler',
         'New-BizTalkHandler',
         'Remove-BizTalkHandler',
@@ -74,6 +77,7 @@
         'Test-BizTalkHost',
         'Update-BizTalkHost',
         # HostInstance.psm1
+        'Assert-BizTalkHostInstance',
         'Disable-BizTalkHostInstance',
         'Enable-BizTalkHostInstance',
         'Get-BizTalkHostInstance',

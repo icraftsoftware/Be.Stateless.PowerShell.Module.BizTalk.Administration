@@ -20,6 +20,73 @@ Set-StrictMode -Version Latest
 
 <#
 .SYNOPSIS
+    Asserts the existence of a Microsoft BizTalk Server Host Instance and whether it is in the expected state.
+.DESCRIPTION
+    This command will throw if the Microsoft BizTalk Server Host Instance does not exist, or is not in the expected
+    state, and will silently complete otherwise.
+.PARAMETER Name
+    The name of the Microsoft BizTalk Server Host.
+.PARAMETER Server
+    The server on which the Microsoft BizTalk Server Host Instance is tested for existence; it defaults to the
+    local machine name.
+.PARAMETER IsDisabled
+    Whether the Microsoft BizTalk Server Host Instance must be disabled from starting as well.
+.PARAMETER IsStarted
+    Whether the Microsoft BizTalk Server Host Instance must be started as well.
+.PARAMETER IsStopped
+    Whether the Microsoft BizTalk Server Host Instance must be stopped as well.
+.EXAMPLE
+    PS> Assert-BizTalkHostInstance -Name 'Transmit Host'
+.EXAMPLE
+    PS> Assert-BizTalkHostInstance -Name 'Transmit Host' -IsStarted
+.EXAMPLE
+    PS> Assert-BizTalkHostInstance -Name 'Transmit Host' -IsDisabled -IsStopped
+.EXAMPLE
+    PS> Assert-BizTalkHostInstance -Name 'Transmit Host' -Server 'ComputerName'
+.NOTES
+    © 2020 be.stateless.
+#>
+function Assert-BizTalkHostInstance {
+    [CmdletBinding(DefaultParameterSetName = 'no-service-state')]
+    [OutputType([void])]
+    param(
+        [Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'no-service-state')]
+        [Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'started-service-state')]
+        [Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'stopped-service-state')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Name,
+
+        [Parameter(Mandatory = $false, ParameterSetName = 'no-service-state')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'started-service-state')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'stopped-service-state')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Server = $Env:COMPUTERNAME,
+
+        [Parameter(Mandatory = $false, ParameterSetName = 'no-service-state')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'started-service-state')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'stopped-service-state')]
+        [Switch]
+        $IsDisabled,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'started-service-state')]
+        [Switch]
+        $IsStarted,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'stopped-service-state')]
+        [Switch]
+        $IsStopped
+    )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+    if (-not(Test-BizTalkHostInstance @PSBoundParameters)) {
+        throw "Microsoft BizTalk Server '$Name' Host Instance on '$Server' server does not exist or is not in the expected state."
+    }
+    Write-Verbose "Microsoft BizTalk Server '$Name' Host Instance on '$Server' server exists and is in the expected state."
+}
+
+<#
+.SYNOPSIS
     Disables a Microsoft BizTalk Server Host Instance.
 .DESCRIPTION
     Disables a Microsoft BizTalk Server Host Instance.
@@ -504,53 +571,64 @@ function Stop-BizTalkHostInstance {
 .PARAMETER Server
     The server on which the Microsoft BizTalk Server Host Instance is tested for existence; it defaults to the
     local machine name.
+.PARAMETER IsDisabled
+    Whether the Microsoft BizTalk Server Host Instance must be disabled from starting as well.
+.PARAMETER IsStarted
+    Whether the Microsoft BizTalk Server Host Instance must be started as well.
+.PARAMETER IsStopped
+    Whether the Microsoft BizTalk Server Host Instance must be stopped as well.
 .OUTPUTS
     Returns $true if the Microsoft BizTalk Server Host Instance exists; $false otherwise.
 .EXAMPLE
     PS> Test-BizTalkHostInstance -Name 'Transmit Host'
+.EXAMPLE
+    PS> Test-BizTalkHostInstance -Name 'Transmit Host' -IsStarted
+.EXAMPLE
+    PS> Test-BizTalkHostInstance -Name 'Transmit Host' -IsDisabled -IsStopped
 .EXAMPLE
     PS> Test-BizTalkHostInstance -Name 'Transmit Host' -Server 'ComputerName'
 .NOTES
     © 2020 be.stateless.
 #>
 function Test-BizTalkHostInstance {
-    [CmdletBinding(DefaultParameterSetName = 'no-state')]
+    [CmdletBinding(DefaultParameterSetName = 'no-service-state')]
     [OutputType([bool])]
     param(
-        [Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'no-state')]
-        [Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'started')]
-        [Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'stopped')]
+        [Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'no-service-state')]
+        [Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'started-service-state')]
+        [Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'stopped-service-state')]
         [ValidateNotNullOrEmpty()]
         [string]
         $Name,
 
-        [Parameter(Mandatory = $false, ParameterSetName = 'no-state')]
-        [Parameter(Mandatory = $false, ParameterSetName = 'started')]
-        [Parameter(Mandatory = $false, ParameterSetName = 'stopped')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'no-service-state')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'started-service-state')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'stopped-service-state')]
         [ValidateNotNullOrEmpty()]
         [string]
         $Server = $Env:COMPUTERNAME,
 
-        [Parameter(Mandatory = $false, ParameterSetName = 'no-state')]
-        [Parameter(Mandatory = $false, ParameterSetName = 'started')]
-        [Parameter(Mandatory = $false, ParameterSetName = 'stopped')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'no-service-state')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'started-service-state')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'stopped-service-state')]
         [Switch]
         $IsDisabled,
 
-        [Parameter(Mandatory = $true, ParameterSetName = 'started')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'started-service-state')]
         [Switch]
         $IsStarted,
 
-        [Parameter(Mandatory = $true, ParameterSetName = 'stopped')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'stopped-service-state')]
         [Switch]
         $IsStopped
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     $hostInstance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='$Name' and RunningServer='$Server'"
-    # https://docs.microsoft.com/en-us/biztalk/core/technical-reference/msbts-hostinstance-servicestate-property-wmi
+    $doesMatchExpectedDisabledState = -not $PSBoundParameters.ContainsKey('IsDisabled') -or ($hostInstance -and $IsDisabled -eq $hostInstance.IsDisabled)
     switch ($PSCmdlet.ParameterSetName) {
-        'no-state' { [bool]$hostInstance -and (-not $PSBoundParameters.ContainsKey('IsDisabled') -or $hostInstance.IsDisabled) }
-        'started' { [bool]$hostInstance -and $hostInstance.ServiceState -eq 4 -and (-not $PSBoundParameters.ContainsKey('IsDisabled') -or $hostInstance.IsDisabled) }
-        'stopped' { [bool]$hostInstance -and $hostInstance.ServiceState -eq 1 -and (-not $PSBoundParameters.ContainsKey('IsDisabled') -or $hostInstance.IsDisabled) }
+        'no-service-state' { $hostInstance -and $doesMatchExpectedDisabledState }
+        # https://docs.microsoft.com/en-us/biztalk/core/technical-reference/msbts-hostinstance-servicestate-property-wmi
+        'started-service-state' { $hostInstance -and $doesMatchExpectedDisabledState -and (($IsStarted -and $hostInstance.ServiceState -eq 4) -or (-not $IsStarted -and $hostInstance.ServiceState -ne 4)) }
+        'stopped-service-state' { $hostInstance -and $doesMatchExpectedDisabledState -and (($IsStopped -and $hostInstance.ServiceState -eq 1) -or (-not $IsStopped -and $hostInstance.ServiceState -ne 1)) }
     }
 }

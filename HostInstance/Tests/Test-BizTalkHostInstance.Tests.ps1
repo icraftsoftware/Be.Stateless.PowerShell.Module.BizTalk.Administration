@@ -25,27 +25,75 @@ Describe 'Test-BizTalkHostInstance' {
     }
     InModuleScope HostInstance {
 
-        Context 'Testing the existence of BizTalk Server Host Instances' {
-            It 'Returns $true when the host instance exists.' {
+        Context 'When the BizTalk Server Host Instance does not exist' {
+            It 'Returns $false.' {
+                Test-BizTalkHostInstance -Name Inexistent-Host | Should -BeFalse
+            }
+        }
+
+        Context 'When the BizTalk Server Host Instance exists' {
+            It 'Returns $true.' {
                 Test-BizTalkHostInstance -Name BizTalkServerIsolatedHost | Should -BeTrue
             }
-            It 'Returns $true when the host instance exists and is disabled.' {
-                Test-BizTalkHostInstance -Name Test_Host_1 -IsDisabled | Should -BeTrue
+        }
+
+        Context 'When the BizTalk Server Host Instance is started and not disabled' {
+            It 'Returns $true when the host instance is not disabled.' {
+                Test-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled:$false | Should -BeTrue
             }
-            It 'Returns $true when the host instance exists, is stopped, and is disabled.' {
-                Test-BizTalkHostInstance -Name Test_Host_1 -IsDisabled -IsStopped | Should -BeTrue
+            It 'Returns $false when the host instance should be disabled.' {
+                Test-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled | Should -BeFalse
             }
-            It 'Returns $true when the host instance exists and is started.' {
+            It 'Returns $true when the host instance is started.' {
                 Test-BizTalkHostInstance -Name BizTalkServerApplication -IsStarted | Should -BeTrue
             }
-            It 'Returns $false when the host instance exists, is started but is not disabled.' {
+            It 'Returns $false when the host instance should not be started.' {
+                Test-BizTalkHostInstance -Name BizTalkServerApplication -IsStarted:$false | Should -BeFalse
+            }
+            It 'Returns $true when the host instance is not disabled and is started.' {
+                Test-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled:$false -IsStarted | Should -BeTrue
+            }
+            It 'Returns $false when the host instance is started but should be disabled.' {
                 Test-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled -IsStarted | Should -BeFalse
             }
-            It 'Returns $false when the host instance exists and is not stopped.' {
+            It 'Returns $false when the host instance is not disabled but should not be started.' {
+                Test-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled:$false -IsStarted:$false | Should -BeFalse
+            }
+            It 'Returns $true when the host instance is not stopped.' {
+                Test-BizTalkHostInstance -Name BizTalkServerApplication -IsStopped:$false | Should -BeTrue
+            }
+            It 'Returns $false when the host instance should be stopped.' {
                 Test-BizTalkHostInstance -Name BizTalkServerApplication -IsStopped | Should -BeFalse
             }
-            It 'Returns $false when the host instance does not exist.' {
-                Test-BizTalkHostInstance -Name Inexistent-Host | Should -BeFalse
+        }
+
+        Context 'When the BizTalk Server Host Instance is stopped and disabled' {
+            It 'Returns $true when the host instance is disabled.' {
+                Test-BizTalkHostInstance -Name Test_Host_1 -IsDisabled | Should -BeTrue
+            }
+            It 'Returns $false when the host instance should not be disabled.' {
+                Test-BizTalkHostInstance -Name Test_Host_1 -IsDisabled:$false | Should -BeFalse
+            }
+            It 'Returns $true when the host instance is not started.' {
+                Test-BizTalkHostInstance -Name Test_Host_1 -IsStarted:$false | Should -BeTrue
+            }
+            It 'Returns $false when the host instance should be started.' {
+                Test-BizTalkHostInstance -Name Test_Host_1 -IsStarted | Should -BeFalse
+            }
+            It 'Returns $true when the host instance is stopped.' {
+                Test-BizTalkHostInstance -Name Test_Host_1 -IsStopped | Should -BeTrue
+            }
+            It 'Returns $false when the host instance should not be stopped.' {
+                Test-BizTalkHostInstance -Name Test_Host_1 -IsStopped:$false | Should -BeFalse
+            }
+            It 'Returns $true when the host instance is disabled and is stopped.' {
+                Test-BizTalkHostInstance -Name Test_Host_1 -IsDisabled -IsStopped | Should -BeTrue
+            }
+            It 'Returns $false when the host instance is stopped but should be disabled.' {
+                Test-BizTalkHostInstance -Name Test_Host_1 -IsDisabled:$false -IsStopped | Should -BeFalse
+            }
+            It 'Returns $false when the host instance is disabled but should not be stopped.' {
+                Test-BizTalkHostInstance -Name Test_Host_1 -IsDisabled -IsStopped:$false | Should -BeFalse
             }
         }
 

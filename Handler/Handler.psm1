@@ -25,6 +25,48 @@ enum Direction {
 
 <#
 .SYNOPSIS
+    Asserts the existence of a Microsoft BizTalk Server Adapter Handler.
+.DESCRIPTION
+    This command will throw if the Microsoft BizTalk Server Adapter Handler does not exist and will silently complete
+    otherwise.
+.PARAMETER Adapter
+    The adapter name of the Microsoft BizTalk Server Adapter Handler.
+.PARAMETER Host
+    The host name of the Microsoft BizTalk Server Host Handler.
+.PARAMETER Direction
+    The direction of the Microsoft BizTalk Server Adapter Handler.
+.EXAMPLE
+    PS> Assert-BizTalkHandler -Adapter FILE -Host BizTalkServerApplication -Direction Send
+.NOTES
+    © 2020 be.stateless.
+#>
+function Assert-BizTalkHandler {
+    [CmdletBinding()]
+    [OutputType([void])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Adapter,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Host,
+
+        [Parameter(Mandatory = $true)]
+        [Direction]
+        $Direction
+    )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+    if (-not(Test-BizTalkHandler @PSBoundParameters)) {
+        throw "Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host does not exist."
+    }
+    Write-Verbose "Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host exists."
+}
+
+<#
+.SYNOPSIS
     Gets information Microsoft BizTalk Server Adapter Handlers.
 .DESCRIPTION
     Gets information Microsoft BizTalk Server Adapter Handlers.

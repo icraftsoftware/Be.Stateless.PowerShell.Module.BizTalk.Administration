@@ -20,6 +20,49 @@ Set-StrictMode -Version Latest
 
 <#
 .SYNOPSIS
+    Asserts the existence of a Microsoft BizTalk Server Adapter.
+.DESCRIPTION
+    This command will throw if the Microsoft BizTalk Server Adapter does not exist and will silently complete
+    otherwise. If the existence has to be asserted for the combined sources, this command will silently complete only
+    if the Microsoft BizTalk Server adapter exists in both sources.
+.PARAMETER Name
+    The name of the Microsoft BizTalk Server Adapter.
+.PARAMETER Source
+    The place where to look for the Microsoft BizTalk Server Adapter: either among those configured and available
+    in Microsoft BizTalk Server, or among those registered in the local machine's COM registry, or as a
+    combination of both sources. It defaults to BizTalk.
+.EXAMPLE
+    PS> Assert-BizTalkAdapter -Name FILE
+.EXAMPLE
+    PS> Assert-BizTalkAdapter -Name FILE -Source Registry
+.EXAMPLE
+    PS> Assert-BizTalkAdapter -Name FILE -Source Combined
+.EXAMPLE
+    PS> Assert-BizTalkAdapter -Name FILE -Source Combined -Verbose
+.NOTES
+    © 2020 be.stateless.
+#>
+function Assert-BizTalkAdapter {
+    [CmdletBinding()]
+    [OutputType([void])]
+    param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Name,
+
+        [Parameter(Position = 1, Mandatory = $false)]
+        [ValidateSet('BizTalk', 'Registry', 'Combined')]
+        [string]
+        $Source = 'BizTalk'
+    )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+    if (-not(Test-BizTalkAdapter @PSBoundParameters)) { throw "Microsoft BizTalk Server Adapter '$Name' does not exist in $Source source(s)." }
+    Write-Verbose "Microsoft BizTalk Server Adapter '$Name' exists in $Source source(s)."
+}
+
+<#
+.SYNOPSIS
     Gets information about the Microsoft BizTalk Server Adapters.
 .DESCRIPTION
     Gets information about the Microsoft BizTalk Server Adapters available in Microsoft BizTalk Server or the local

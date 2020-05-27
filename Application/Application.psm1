@@ -23,6 +23,51 @@ Set-StrictMode -Version Latest
 
 <#
 .SYNOPSIS
+    Asserts the existence of a Microsoft BizTalk Server Application.
+.DESCRIPTION
+    This command will throw if the Microsoft BizTalk Server Application does not exist and will silently complete
+    otherwise.
+.PARAMETER Name
+    The name of the Microsoft BizTalk Server Application.
+.PARAMETER ManagementDatabaseServer
+    The name of the SQL server hosting the management database; it defaults to MSBTS_GroupSetting.MgmtDbServerName.
+.PARAMETER ManagementDatabaseName
+    The name of the management database; it defaults to MSBTS_GroupSetting.MgmtDbName.
+.EXAMPLE
+    PS> Assert-BizTalkApplication
+.EXAMPLE
+    PS> Assert-BizTalkApplication -Name 'BizTalk.System'
+.NOTES
+    © 2020 be.stateless.
+#>
+function Assert-BizTalkApplication {
+    [CmdletBinding()]
+    [OutputType([void])]
+    param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Name,
+
+        [Parameter(Position = 1, Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $ManagementDatabaseServer = (Group\Get-BizTalGroupMgmtDbServer),
+
+        [Parameter(Position = 2, Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $ManagementDatabaseName = (Group\Get-BizTalGroupMgmtDbName)
+    )
+    Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
+    if (-not(Test-BizTalkApplication @PSBoundParameters)) {
+        throw "Microsoft BizTalk Server Application '$Name' does not exist."
+    }
+    Write-Verbose "Microsoft BizTalk Server Application '$Name' exists."
+}
+
+<#
+.SYNOPSIS
     Gets the Microsoft BizTalk Server Applications.
 .DESCRIPTION
     Gets either one or all of the Microsoft BizTalk Server Applications as Microsoft.BizTalk.ExplorerOM.Application
@@ -32,7 +77,7 @@ Set-StrictMode -Version Latest
 .PARAMETER ManagementDatabaseServer
     The name of the SQL server hosting the management database; it defaults to MSBTS_GroupSetting.MgmtDbServerName.
 .PARAMETER ManagementDatabaseName
-    The name of the management database;  it defaults to MSBTS_GroupSetting.MgmtDbName.
+    The name of the management database; it defaults to MSBTS_GroupSetting.MgmtDbName.
 .OUTPUTS
     Returns the Microsoft BizTalk Server Applications.
 .EXAMPLE
@@ -226,21 +271,21 @@ function Stop-BizTalkApplication {
 
 <#
 .SYNOPSIS
-    Tests the existence of a Microsoft BizTalk Server Applications.
+    Tests the existence of a Microsoft BizTalk Server Application.
 .DESCRIPTION
-    Tests the existence of a Microsoft BizTalk Server Applications.
+    Tests the existence of a Microsoft BizTalk Server Application.
 .PARAMETER Name
     The name of the Microsoft BizTalk Server Application.
 .PARAMETER ManagementDatabaseServer
     The name of the SQL server hosting the management database; it defaults to MSBTS_GroupSetting.MgmtDbServerName.
 .PARAMETER ManagementDatabaseName
-    The name of the management database;  it defaults to MSBTS_GroupSetting.MgmtDbName.
+    The name of the management database; it defaults to MSBTS_GroupSetting.MgmtDbName.
 .OUTPUTS
     Returns $true if the Microsoft BizTalk Server Application exists; $false otherwise.
 .EXAMPLE
-    PS> Get-BizTalkApplication
+    PS> Test-BizTalkApplication
 .EXAMPLE
-    PS> Get-BizTalkApplication -Name 'BizTalk.System'
+    PS> Test-BizTalkApplication -Name 'BizTalk.System'
 .NOTES
     © 2020 be.stateless.
 #>

@@ -313,12 +313,10 @@ function New-BizTalkHostInstance {
                 MgmtDbNameOverride   = ''
                 MgmtDbServerOverride = ''
             }
-            Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Install -Arguments @{
-                GrantLogOnAsService = $true
-                IsGmsaAccount       = $false
-                Logon               = $User
-                Password            = $Password
-            } | Out-Null
+
+            $arguments = @{ GrantLogOnAsService = $true ; Logon = $User ; Password = $Password }
+            if (Test-GmsaAccountSupport) { $arguments.IsGmsaAccount = $false }
+            Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Install -Arguments $arguments | Out-Null
 
             if (Test-BizTalkHost -Name $Name -Type InProcess) {
                 if ($Disabled.IsPresent) {
@@ -631,4 +629,21 @@ function Test-BizTalkHostInstance {
         'started-service-state' { $hostInstance -and $doesMatchExpectedDisabledState -and (($IsStarted -and $hostInstance.ServiceState -eq 4) -or (-not $IsStarted -and $hostInstance.ServiceState -ne 4)) }
         'stopped-service-state' { $hostInstance -and $doesMatchExpectedDisabledState -and (($IsStopped -and $hostInstance.ServiceState -eq 1) -or (-not $IsStopped -and $hostInstance.ServiceState -ne 1)) }
     }
+}
+
+function Test-GmsaAccountSupport {
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param()
+
+    if (-not(Get-Variable -Name IsGmsaAccountSupported -Scope Script -ErrorAction Ignore)) {
+        $isSupported = Get-CimClass -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance |
+            Select-Object -ExpandProperty CimClassMethods |
+            Where-Object -FilterScript { $_.Name -eq 'Install' } |
+            Select-Object -ExpandProperty Parameters |
+            Where-Object -FilterScript { $_.Name -eq 'IsGmsaAccount' } |
+            Test-Any
+        New-Variable -Name IsGmsaAccountSupported -Option ReadOnly -Scope Script -Value $isSupported
+    }
+    $IsGmsaAccountSupported
 }

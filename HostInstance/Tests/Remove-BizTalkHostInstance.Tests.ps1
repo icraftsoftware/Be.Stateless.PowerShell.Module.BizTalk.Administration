@@ -72,14 +72,9 @@ Describe 'Remove-BizTalkHostInstance' {
                     MgmtDbNameOverride   = ''
                     MgmtDbServerOverride = ''
                 }
-                {
-                    Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Install -Arguments @{
-                        GrantLogOnAsService = $true
-                        IsGmsaAccount       = $false
-                        Logon               = 'BTS_USER'
-                        Password            = 'wrong-password'
-                    }
-                } | Should -Throw
+                $arguments = @{ GrantLogOnAsService = $true ; Logon = 'BTS_USER' ; Password = 'wrong-password' }
+                if (Test-GmsaAccountSupport) { $arguments.IsGmsaAccount = $false }
+                { Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Install -Arguments $arguments | Out-Null } | Should -Throw
                 Test-BizTalkHostInstance -Name Test_Host_3 | Should -BeTrue
 
                 { Remove-BizTalkHostInstance -Name Test_Host_3 } | Should -Not -Throw

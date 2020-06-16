@@ -28,6 +28,18 @@ Describe 'Assert-BizTalkApplication' {
             It 'Throws when the application does not exist.' {
                 { Assert-BizTalkApplication -Name Dummy.BizTalk.Application } | Should -Throw -ExpectedMessage 'Microsoft BizTalk Server Application ''Dummy.BizTalk.Application'' does not exist.'
             }
+            It 'Does not throw when the application exists and references the given applications.' {
+                { Assert-BizTalkApplication -Name 'BizTalk EDI Application' -References BizTalk.System } | Should -Not -Throw
+            }
+            It 'Throws when the application exists but is mistakenly tested for some application reference.' {
+                { Assert-BizTalkApplication -Name BizTalk.System -References Unknown.Application } | Should -Throw -ExpectedMessage 'Microsoft BizTalk Server Application ''BizTalk.System'' does not exist or some the required application refereces ''Unknown.Application'' are missing.'
+            }
+            It 'Throws when the application exists but does not reference one of the given applications.' {
+                { Assert-BizTalkApplication -Name 'BizTalk EDI Application' -References BizTalk.System, Unknown.Application } | Should -Throw -ExpectedMessage 'Microsoft BizTalk Server Application ''BizTalk EDI Application'' does not exist or some the required application refereces ''BizTalk.System'', ''Unknown.Application'' are missing.'
+            }
+            It 'Throws when the application exists but does not reference any of the given applications.' {
+                { Assert-BizTalkApplication -Name 'BizTalk EDI Application' -References Dummy.BizTalk.Application, Unknown.Application } | Should -Throw -ExpectedMessage 'Microsoft BizTalk Server Application ''BizTalk EDI Application'' does not exist or some the required application refereces ''Dummy.BizTalk.Application'', ''Unknown.Application'' are missing.'
+            }
         }
 
     }

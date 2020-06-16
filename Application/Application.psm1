@@ -29,6 +29,9 @@ Set-StrictMode -Version Latest
     otherwise.
 .PARAMETER Name
     The name of the Microsoft BizTalk Server Application.
+.PARAMETER References
+    The name of the Microsoft BizTalk Server Applications that are to be referenced by the one whose existence is
+    tested.
 .PARAMETER ManagementDatabaseServer
     The name of the SQL server hosting the management database; it defaults to MSBTS_GroupSetting.MgmtDbServerName.
 .PARAMETER ManagementDatabaseName
@@ -49,6 +52,11 @@ function Assert-BizTalkApplication {
         [string]
         $Name,
 
+        [Parameter(Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [string[]]
+        $References,
+
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
@@ -61,7 +69,11 @@ function Assert-BizTalkApplication {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkApplication @PSBoundParameters)) {
-        throw "Microsoft BizTalk Server Application '$Name' does not exist."
+        if ($References | Test-None) {
+            throw "Microsoft BizTalk Server Application '$Name' does not exist."
+        } else {
+            throw "Microsoft BizTalk Server Application '$Name' does not exist or some the required application refereces '$($References -join ''', ''')' are missing."
+        }
     }
     Write-Verbose "Microsoft BizTalk Server Application '$Name' exists."
 }
@@ -129,14 +141,37 @@ function New-BizTalkApplication {
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $Description
+        $Description,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [string[]]
+        $References
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkApplication -Name $Name) {
         Write-Information "`t Microsoft BizTalk Server Application '$Name' has already been created."
     } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Creating application '$Name'")) {
         Write-Information "`t Creating Microsoft BizTalk Server Application '$Name'..."
-        Invoke-Tool -Command { BTSTask AddApp -ApplicationName:"$Name" -Description:"$Description" }
+        Use-Object ($catalog = Get-BizTalkCatalog ) {
+            try {
+                $application = $catalog.AddNewApplication()
+                $application.Name = $Name
+                if (![string]::IsNullOrWhiteSpace($Description)) { $application.Description = $Description }
+                if ($References | Test-Any) {
+                    $References | ForEach-Object -Process {
+                        Assert-BizTalkApplication -Name $_
+                        $dependantApplication = $catalog.Applications[$_]
+                        Write-Information -MessageData "`t Adding Reference to Microsoft BizTalk Server Application '$_' from Microsoft BizTalk Server Application '$Name'."
+                        $application.AddReference($dependantApplication)
+                    }
+                }
+                $catalog.SaveChanges()
+            } catch {
+                $catalog.DiscardChanges()
+                throw
+            }
+        }
         Write-Information "`t Microsoft BizTalk Server Application '$Name' has been created."
     }
 }
@@ -155,7 +190,16 @@ function Remove-BizTalkApplication {
         Write-Information "`t Microsoft BizTalk Server Application '$Name' has already been removed."
     } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Removing application '$Name'")) {
         Write-Information "`t Removing Microsoft BizTalk Server Application '$Name'..."
-        Invoke-Tool -Command { BTSTask RemoveApp -ApplicationName:"$Name" }
+        Use-Object ($catalog = Get-BizTalkCatalog ) {
+            try {
+                $application = $catalog.Applications[$Name]
+                $catalog.RemoveApplication($application)
+                $catalog.SaveChanges()
+            } catch {
+                $catalog.DiscardChanges()
+                throw
+            }
+        }
         Write-Information "`t Microsoft BizTalk Server Application '$Name' has been removed."
     }
 }
@@ -276,6 +320,9 @@ function Stop-BizTalkApplication {
     Tests the existence of a Microsoft BizTalk Server Application.
 .PARAMETER Name
     The name of the Microsoft BizTalk Server Application.
+.PARAMETER References
+    The name of the Microsoft BizTalk Server Applications that are to be referenced by the one whose existence is
+    tested.
 .PARAMETER ManagementDatabaseServer
     The name of the SQL server hosting the management database; it defaults to MSBTS_GroupSetting.MgmtDbServerName.
 .PARAMETER ManagementDatabaseName
@@ -298,6 +345,11 @@ function Test-BizTalkApplication {
         [string]
         $Name,
 
+        [Parameter(Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [string[]]
+        $References,
+
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
@@ -310,10 +362,18 @@ function Test-BizTalkApplication {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {
-        $null -ne $catalog.Applications[$Name]
+        $application = $catalog.Applications[$Name]
+        if ($null -ne $application) {
+            if ($References | Test-Any) {
+                $actualReferences = @($application.References | ForEach-Object -Process { $_.Name })
+                $References | Where-Object -FilterScript { $_ -notin $actualReferences } | Test-None
+            } else {
+                $true
+            }
+        } else {
+            $false
+        }
     }
 }
-
-Add-ToolAlias -Path ($env:BTSINSTALLPATH) -Tool BTSTask
 
 Import-Module BizTalk.Administration\Group

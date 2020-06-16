@@ -28,6 +28,18 @@ Describe 'Test-BizTalkApplication' {
             It 'Returns $false when the application does not exist.' {
                 Test-BizTalkApplication -Name Dummy.BizTalk.Application | Should -BeFalse
             }
+            It 'Returns $true when the application exists and references the given applications.' {
+                Test-BizTalkApplication -Name 'BizTalk EDI Application' -References BizTalk.System | Should -BeTrue
+            }
+            It 'Returns $false when the application exists but is mistakenly tested for some application reference.' {
+                Test-BizTalkApplication -Name BizTalk.System -References Unknown.Application | Should -BeFalse
+            }
+            It 'Returns $false when the application exists but does not reference one of the given applications.' {
+                Test-BizTalkApplication -Name 'BizTalk EDI Application' -References BizTalk.System, Unknown.Application | Should -BeFalse
+            }
+            It 'Returns $false when the application exists but does not reference any of the given applications.' {
+                Test-BizTalkApplication -Name 'BizTalk EDI Application' -References Dummy.BizTalk.Application, Unknown.Application | Should -BeFalse
+            }
         }
 
     }

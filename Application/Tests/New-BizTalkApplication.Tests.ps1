@@ -24,8 +24,9 @@ Describe 'New-BizTalkApplication' {
         Context 'Creating Microsoft BizTalk Server Applications' {
             Mock -CommandName Write-Information -ModuleName Application
             It 'Creates an application by name when none is existing yet.' {
-                { New-BizTalkApplication -Name 'Dummy.BizTalk.Application' -InformationAction Continue } | Should -Not -Throw
+                { New-BizTalkApplication -Name 'Dummy.BizTalk.Application' -References 'BizTalk EDI Application' -InformationAction Continue } | Should -Not -Throw
                 Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Application -ParameterFilter { $MessageData -match 'Creating Microsoft BizTalk Server Application ''Dummy.BizTalk.Application''\.\.\.$' }
+                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Application -ParameterFilter { $MessageData -match 'Adding Reference to Microsoft BizTalk Server Application ''BizTalk EDI Application'' from Microsoft BizTalk Server Application ''Dummy.BizTalk.Application''.' }
                 Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Application -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Application ''Dummy.BizTalk.Application'' has been created\.$' }
             }
             It 'Skips application creation when it already exists.' {

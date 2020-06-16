@@ -190,16 +190,7 @@ function Remove-BizTalkApplication {
         Write-Information "`t Microsoft BizTalk Server Application '$Name' has already been removed."
     } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Removing application '$Name'")) {
         Write-Information "`t Removing Microsoft BizTalk Server Application '$Name'..."
-        Use-Object ($catalog = Get-BizTalkCatalog ) {
-            try {
-                $application = $catalog.Applications[$Name]
-                $catalog.RemoveApplication($application)
-                $catalog.SaveChanges()
-            } catch {
-                $catalog.DiscardChanges()
-                throw
-            }
-        }
+        Invoke-Tool -Command { BTSTask RemoveApp -ApplicationName:"$Name" }
         Write-Information "`t Microsoft BizTalk Server Application '$Name' has been removed."
     }
 }
@@ -375,5 +366,7 @@ function Test-BizTalkApplication {
         }
     }
 }
+
+Add-ToolAlias -Path ($env:BTSINSTALLPATH) -Tool BTSTask
 
 Import-Module BizTalk.Administration\Group

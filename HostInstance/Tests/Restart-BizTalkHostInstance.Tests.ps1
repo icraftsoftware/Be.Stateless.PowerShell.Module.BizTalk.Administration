@@ -26,13 +26,13 @@ Describe 'Restart-BizTalkHostInstance' {
     InModuleScope HostInstance {
 
         Context 'When the host instance exists' {
-            Mock -CommandName Write-Information -ModuleName HostInstance
             It 'Does not start a host instance which is stopped.' {
+                Mock -CommandName Write-Information
                 # https://docs.microsoft.com/en-us/biztalk/core/technical-reference/msbts-hostinstance-servicestate-property-wmi
                 Test-BizTalkHostInstance -Name Test_Host -IsStopped | Should -BeTrue
                 { Restart-BizTalkHostInstance -Name Test_Host } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host -IsStopped | Should -BeTrue
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host' Host Instance on '$($env:COMPUTERNAME)' server does not need to be restarted as it is not running\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host' Host Instance on '$($env:COMPUTERNAME)' server does not need to be restarted as it is not running\." }
             }
             It 'Forces a stopped host instance to start.' {
                 Test-BizTalkHostInstance -Name Test_Host -IsStopped | Should -BeTrue
@@ -40,28 +40,30 @@ Describe 'Restart-BizTalkHostInstance' {
                 Test-BizTalkHostInstance -Name Test_Host -IsStarted | Should -BeTrue
             }
             It 'Restarts a started host instance.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host -IsStarted | Should -BeTrue
                 $pid0 = Get-CimInstance -ClassName Win32_Service -Filter "Name='BTSSvc`$Test_Host'" | Select-Object -ExpandProperty ProcessId
                 { Restart-BizTalkHostInstance -Name Test_Host } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host -IsStarted | Should -BeTrue
                 $pid1 = Get-CimInstance -ClassName Win32_Service -Filter "Name='BTSSvc`$Test_Host'" | Select-Object -ExpandProperty ProcessId
                 $pid1 | Should -Not -Be $pid0 # process id has changed due to a host intance's service restart
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host' Host Instance on '$($env:COMPUTERNAME)' server is being restarted\.\.\." }
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host' Host Instance on '$($env:COMPUTERNAME)' server has been restarted\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host' Host Instance on '$($env:COMPUTERNAME)' server is being restarted\.\.\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host' Host Instance on '$($env:COMPUTERNAME)' server has been restarted\." }
             }
             It 'Skips restarting an Isolated host instance.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name BizTalkServerIsolatedHost | Should -BeTrue
                 { Restart-BizTalkHostInstance -Name BizTalkServerIsolatedHost -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'BizTalkServerIsolatedHost' Host Instance on '$($env:COMPUTERNAME)' server is an Isolated Host and can neither be started nor stopped\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'BizTalkServerIsolatedHost' Host Instance on '$($env:COMPUTERNAME)' server is an Isolated Host and can neither be started nor stopped\." }
             }
         }
 
         Context 'When the host instance does not exist' {
-            Mock -CommandName Write-Information -ModuleName HostInstance
             It 'Skips restarting the host instance.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_3 | Should -BeFalse
                 { Restart-BizTalkHostInstance -Name Test_Host_3 -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_3' Host Instance on '$($env:COMPUTERNAME)' server does not exist\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_3' Host Instance on '$($env:COMPUTERNAME)' server does not exist\." }
             }
         }
 

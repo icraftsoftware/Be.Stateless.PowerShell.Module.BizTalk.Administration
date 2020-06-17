@@ -39,11 +39,11 @@ Describe 'Disable-BizTalkHostInstance' {
         }
 
         Context 'When Microsoft BizTalk Server Host Instance does not exist.' {
-            Mock -CommandName Write-Information -ModuleName HostInstance
             It 'Skips disabling the host instance.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_2 | Should -BeFalse
                 { Disable-BizTalkHostInstance -Name Test_Host_2 -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server does not exist." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server does not exist." }
             }
         }
 

@@ -46,11 +46,11 @@ Describe 'Update-BizTalkHost' {
         }
 
         Context 'When BizTalk Server Host does not exist' {
-            Mock -CommandName Write-Information -ModuleName Host
             It 'Skips BizTalk Server Host update.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHost -Name Test_Host_2 | Should -BeFalse
                 { Update-BizTalkHost -Name Test_Host_2 -x86 $true -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Host -ParameterFilter { $MessageData -match '''Test_Host_2'' host does not exist.' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match '''Test_Host_2'' host does not exist.' }
             }
         }
 

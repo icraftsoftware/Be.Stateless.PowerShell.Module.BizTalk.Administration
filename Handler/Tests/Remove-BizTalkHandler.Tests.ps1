@@ -26,22 +26,22 @@ Describe 'Remove-BizTalkHandler' {
     InModuleScope Handler {
 
         Context 'When BizTalk Server Handler exists' {
-            Mock -CommandName Write-Information -ModuleName Handler
             It 'Removes the BizTalk Server Handler.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeTrue
                 { Remove-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeFalse
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Removing Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host\.\.\.' }
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host has been removed\.' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Removing Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host\.\.\.' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host has been removed\.' }
             }
         }
 
         Context 'When BizTalk Server Handler does not exist' {
-            Mock -CommandName Write-Information -ModuleName Handler
             It 'Skips the BizTalk Server Handler removal.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeFalse
                 { Remove-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host has already been removed\.' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host has already been removed\.' }
             }
         }
 

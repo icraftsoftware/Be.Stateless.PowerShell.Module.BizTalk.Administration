@@ -27,22 +27,22 @@ Describe 'Remove-BizTalkHost' {
     InModuleScope Host {
 
         Context 'When BizTalk Server Host already exists' {
-            Mock -CommandName Write-Information -ModuleName Host
             It 'Removes the BizTalk Server Host.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHost -Name Test_Host | Should -BeTrue
                 { Remove-BizTalkHost -Name Test_Host -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHost -Name Test_Host | Should -BeFalse
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Host -ParameterFilter { $MessageData -match 'Removing Microsoft BizTalk Server ''Test_Host'' host\.\.\.' }
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Host -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server ''Test_Host'' host has been removed\.' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Removing Microsoft BizTalk Server ''Test_Host'' host\.\.\.' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server ''Test_Host'' host has been removed\.' }
             }
         }
 
         Context 'When BizTalk Server Host does not exist' {
-            Mock -CommandName Write-Information -ModuleName Host
             It 'Skips BizTalk Server Host removal.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHost -Name Test_Host | Should -BeFalse
                 { Remove-BizTalkHost -Name Test_Host -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Host -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server ''Test_Host'' host has already been removed\.' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server ''Test_Host'' host has already been removed\.' }
             }
         }
 

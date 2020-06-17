@@ -25,22 +25,22 @@ Describe 'New-BizTalkHandler' {
     InModuleScope Handler {
 
         Context 'When BizTalk Server Handler does not yet exist' {
-            Mock -CommandName Write-Information -ModuleName Handler
             It 'Creates a new BizTalk Server Handler.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeFalse
                 { New-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeTrue
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Creating Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host\.\.\.' }
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host has been created\.' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Creating Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host\.\.\.' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host has been created\.' }
             }
         }
 
         Context 'When BizTalk Server Handler already exists' {
-            Mock -CommandName Write-Information -ModuleName Handler
             It 'Skips the BizTalk Server Handler creation.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send | Should -BeTrue
                 { New-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Handler -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host has already been created\.' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Send ''FILE'' handler for ''Test_Host'' host has already been created\.' }
             }
         }
 

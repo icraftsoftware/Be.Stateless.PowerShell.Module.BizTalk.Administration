@@ -29,29 +29,30 @@ Describe 'Remove-BizTalkHostInstance' {
     InModuleScope HostInstance {
 
         Context 'When the host instance exists' {
-            Mock -CommandName Write-Information -ModuleName HostInstance
             It 'Removes the Isolated host instance.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeTrue
                 { Remove-BizTalkHostInstance -Name Test_Host_1 -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeFalse
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Removing Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has been removed\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Removing Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has been removed\." }
             }
             It 'Removes the InProcess host instance even though it is started.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_2 -IsStarted | Should -BeTrue
                 { Remove-BizTalkHostInstance -Name Test_Host_2 -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_2 | Should -BeFalse
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Removing Microsoft BizTalk Server 'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server has been removed\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Removing Microsoft BizTalk Server 'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server has been removed\." }
             }
         }
 
         Context 'When the host instance does not exist' {
-            Mock -CommandName Write-Information -ModuleName HostInstance
             It 'Skips the host instance removal.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeFalse
                 { Remove-BizTalkHostInstance -Name Test_Host_1 -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has already been removed\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has already been removed\." }
             }
         }
 

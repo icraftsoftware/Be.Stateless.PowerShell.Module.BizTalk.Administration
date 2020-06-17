@@ -29,13 +29,13 @@ Describe 'New-BizTalkHostInstance' {
     InModuleScope HostInstance {
 
         Context 'When the host instance does not already exist' {
-            Mock -CommandName Write-Information -ModuleName HostInstance
             It 'Creates a new InProcess host instance.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeFalse
                 { New-BizTalkHostInstance -Name Test_Host_1 -User BTS_USER -Password 'p@ssw0rd' -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeTrue
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Creating Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has been created\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Creating Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has been created\." }
             }
             It 'Creates a new InProcess host instance and starts it.' {
                 Test-BizTalkHostInstance -Name Test_Host_2 | Should -BeFalse
@@ -48,20 +48,21 @@ Describe 'New-BizTalkHostInstance' {
                 Test-BizTalkHostInstance -Name Test_Host_3 -IsDisabled | Should -BeTrue
             }
             It 'Creates a new Isolated host instance' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_4 | Should -BeFalse
                 { New-BizTalkHostInstance -Name Test_Host_4 -User BTS_USER -Password 'p@ssw0rd' -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_4 | Should -BeTrue
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Creating Microsoft BizTalk Server 'Test_Host_4' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_4' Host Instance on '$($env:COMPUTERNAME)' server has been created\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Creating Microsoft BizTalk Server 'Test_Host_4' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_4' Host Instance on '$($env:COMPUTERNAME)' server has been created\." }
             }
         }
 
         Context 'When the host instance already exists' {
-            Mock -CommandName Write-Information -ModuleName HostInstance
             It 'Skips the host instance creation.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeTrue
                 { New-BizTalkHostInstance -Name Test_Host_1 -User BTS_USER -Password 'p@ssw0rd' -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName HostInstance -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has already been created\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has already been created\." }
             }
         }
 

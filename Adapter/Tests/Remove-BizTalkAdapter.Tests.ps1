@@ -33,12 +33,12 @@ Describe 'Remove-BizTalkAdapter' {
         }
 
         Context 'When adapter is not registered' {
-            Mock -CommandName Write-Information -ModuleName Adapter
             It 'Skips the adapter removal.' {
+                Mock -CommandName Write-Information
                 $name = 'WCF-OracleEBS'
                 Test-BizTalkAdapter -Name $name | Should -BeFalse
                 { Remove-BizTalkAdapter -Name $name -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Adapter -ParameterFilter { $MessageData -match "Microsoft BizTalk Server '$name' adapter has already been removed\.$" }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server '$name' adapter has already been removed\.$" }
             }
         }
 

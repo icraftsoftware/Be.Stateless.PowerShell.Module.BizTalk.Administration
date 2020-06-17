@@ -22,16 +22,17 @@ Describe 'Remove-BizTalkApplication' {
     InModuleScope Application {
 
         Context 'Removing Microsoft BizTalk Server Applications' {
-            Mock -CommandName Write-Information -ModuleName Application
             It 'Skips application removal when it does not exist.' {
+                Mock -CommandName Write-Information
                 { Remove-BizTalkApplication -Name 'Dummy.BizTalk.Application' -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Application -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Application ''Dummy.BizTalk.Application'' has already been removed\.$' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Application ''Dummy.BizTalk.Application'' has already been removed\.$' }
             }
             It 'Removes an application by name when it exists.' {
+                Mock -CommandName Write-Information
                 New-BizTalkApplication -Name 'Dummy.BizTalk.Application'
                 { Remove-BizTalkApplication -Name 'Dummy.BizTalk.Application' -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Application -ParameterFilter { $MessageData -match 'Removing Microsoft BizTalk Server Application ''Dummy.BizTalk.Application''\.\.\.$' }
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Application -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Application ''Dummy.BizTalk.Application'' has been removed\.$' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Removing Microsoft BizTalk Server Application ''Dummy.BizTalk.Application''\.\.\.$' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Application ''Dummy.BizTalk.Application'' has been removed\.$' }
             }
         }
 

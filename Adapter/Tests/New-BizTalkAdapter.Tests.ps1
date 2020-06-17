@@ -33,11 +33,11 @@ Describe 'New-BizTalkAdapter' {
         }
 
         Context 'When adapter is locally installed and already registered' {
-            Mock -CommandName Write-Information -ModuleName Adapter
             It 'Skips the adapter registration.' {
+                Mock -CommandName Write-Information
                 Test-BizTalkAdapter -Name FILE | Should -BeTrue
                 { New-BizTalkAdapter -Name FILE -InformationAction Continue } | Should -Not -Throw
-                Assert-MockCalled -Scope It -CommandName Write-Information -ModuleName Adapter -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server ''FILE'' adapter has already been created\.$' }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server ''FILE'' adapter has already been created\.$' }
             }
         }
 

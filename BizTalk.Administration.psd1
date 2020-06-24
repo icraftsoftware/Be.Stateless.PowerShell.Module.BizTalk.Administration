@@ -92,6 +92,11 @@
         'Get-BizTalkController'
     )
     VariablesToExport     = @()
-
-    PrivateData           = @{ }
+    PrivateData           = @{
+        PSData = @{
+            Tags       = @('BizTalk', 'BizTalk Administration', 'Adapter', 'Application', 'Handler', 'Host', 'Host Instance')
+            LicenseUri = 'https://github.com/icraftsoftware/Be.Stateless.PowerShell.Module.BizTalk.Administration/blob/master/LICENSE'
+            ProjectUri = 'https://github.com/icraftsoftware/Be.Stateless.PowerShell.Module.BizTalk.Administration'
+        }
+    }
 }

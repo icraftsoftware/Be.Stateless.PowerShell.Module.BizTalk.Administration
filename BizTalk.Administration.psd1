@@ -94,7 +94,7 @@
     VariablesToExport     = @()
     PrivateData           = @{
         PSData = @{
-            Tags                       = @('BizTalk', 'BizTalk Administration', 'Adapter', 'Application', 'Handler', 'Host', 'Host Instance')
+            Tags                       = @('BizTalk', 'Administration', 'Adapter', 'Application', 'Handler', 'Host', 'HostInstance')
             LicenseUri                 = 'https://github.com/icraftsoftware/Be.Stateless.PowerShell.Module.BizTalk.Administration/blob/master/LICENSE'
             ProjectUri                 = 'https://github.com/icraftsoftware/Be.Stateless.PowerShell.Module.BizTalk.Administration'
             ExternalModuleDependencies = @('Exec', 'Psx')

@@ -16,7 +16,7 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\HostInstance -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'New-BizTalkHostInstance' {
     BeforeAll {
@@ -26,7 +26,7 @@ Describe 'New-BizTalkHostInstance' {
         New-BizTalkHost -Name Test_Host_4 -Type Isolated -Group 'BizTalk Isolated Host Users'
         New-BizTalkHost -Name Test_Host_5 -Type InProcess -Group 'BizTalk Application Users'
     }
-    InModuleScope HostInstance {
+    InModuleScope BizTalk.Administration {
 
         Context 'When the host instance does not already exist' {
             It 'Creates a new InProcess host instance.' {

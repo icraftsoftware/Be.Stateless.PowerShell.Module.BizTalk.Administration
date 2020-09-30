@@ -16,7 +16,7 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\HostInstance -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Remove-BizTalkHostInstance' {
     BeforeAll {
@@ -26,7 +26,7 @@ Describe 'Remove-BizTalkHostInstance' {
         New-BizTalkHostInstance -Name Test_Host_2 -User BTS_USER -Password 'p@ssw0rd' -Started
         New-BizTalkHost -Name Test_Host_3 -Type InProcess -Group 'BizTalk Application Users'
     }
-    InModuleScope HostInstance {
+    InModuleScope BizTalk.Administration {
 
         Context 'When the host instance exists' {
             It 'Removes the Isolated host instance.' {

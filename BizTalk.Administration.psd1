@@ -26,15 +26,7 @@
     Description           = 'Commands to administrate, configure, and explore BizTalk Server.'
     ProcessorArchitecture = 'None'
     PowerShellVersion     = '5.0'
-    NestedModules         = @(
-        'Adapter\Adapter.psm1',
-        'Application\Application.psm1',
-        'Group\Group.psm1',
-        'Handler\Handler.psm1',
-        'Host\Host.psm1',
-        'HostInstance\HostInstance.psm1',
-        'Platform\Platform.psm1'
-    )
+    NestedModules         = @()
     RequiredAssemblies    = @(
         'Microsoft.BizTalk.ExplorerOM.dll',
         'Microsoft.BizTalk.Operations.dll'
@@ -47,13 +39,13 @@
         # RootModule
         'Assert-BizTalkServer',
         'Test-BizTalkServer',
-        # Adapter.psm1
+        # Adapter.ps1
         'Assert-BizTalkAdapter',
         'Get-BizTalkAdapter',
         'New-BizTalkAdapter',
         'Remove-BizTalkAdapter',
         'Test-BizTalkAdapter',
-        # Application.psm1
+        # Application.ps1
         'Assert-BizTalkApplication',
         'Get-BizTalkApplication',
         'New-BizTalkApplication',
@@ -61,22 +53,22 @@
         'Start-BizTalkApplication',
         'Stop-BizTalkApplication',
         'Test-BizTalkApplication',
-        # Group.psm1
+        # Group.ps1
         'Get-BizTalGroupSettings',
-        # Handler.psm1
+        # Handler.ps1
         'Assert-BizTalkHandler',
         'Get-BizTalkHandler',
         'New-BizTalkHandler',
         'Remove-BizTalkHandler',
         'Test-BizTalkHandler',
-        # Host.psm1
+        # Host.ps1
         'Assert-BizTalkHost',
         'Get-BizTalkHost',
         'New-BizTalkHost',
         'Remove-BizTalkHost',
         'Test-BizTalkHost',
         'Update-BizTalkHost',
-        # HostInstance.psm1
+        # HostInstance.ps1
         'Assert-BizTalkHostInstance',
         'Disable-BizTalkHostInstance',
         'Enable-BizTalkHostInstance',
@@ -87,7 +79,7 @@
         'Start-BizTalkHostInstance',
         'Stop-BizTalkHostInstance',
         'Test-BizTalkHostInstance',
-        # Platform.psm1
+        # Platform.ps1
         'Get-BizTalkCatalog',
         'Get-BizTalkController'
     )

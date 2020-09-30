@@ -16,12 +16,10 @@
 
 #endregion
 
-using assembly Microsoft.BizTalk.ExplorerOM
-
-Import-Module -Name $PSScriptRoot\..\Host -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'New-BizTalkHost' {
-    InModuleScope Host {
+    InModuleScope BizTalk.Administration {
 
         Context 'When BizTalk Server Host does not yet exist' {
             It 'Creates a new BizTalk Server Host.' {

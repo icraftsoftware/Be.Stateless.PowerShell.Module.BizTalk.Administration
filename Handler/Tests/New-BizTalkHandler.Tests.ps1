@@ -16,13 +16,13 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Handler -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'New-BizTalkHandler' {
     BeforeAll {
         New-BizTalkHost -Name Test_Host -Type InProcess -Group 'BizTalk Application Users'
     }
-    InModuleScope Handler {
+    InModuleScope BizTalk.Administration {
 
         Context 'When BizTalk Server Handler does not yet exist' {
             It 'Creates a new BizTalk Server Handler.' {

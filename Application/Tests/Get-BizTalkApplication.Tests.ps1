@@ -16,13 +16,10 @@
 
 #endregion
 
-using assembly Microsoft.BizTalk.ExplorerOM
-using assembly Microsoft.BizTalk.Operations
-
-Import-Module -Name $PSScriptRoot\..\Application -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Get-BizTalkApplication' {
-    InModuleScope Application {
+    InModuleScope BizTalk.Administration {
 
         Context 'Enumerating Microsoft BizTalk Server Applications' {
             It 'By name returns one application when found.' {

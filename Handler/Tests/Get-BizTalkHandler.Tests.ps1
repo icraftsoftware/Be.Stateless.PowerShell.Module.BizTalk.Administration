@@ -16,10 +16,10 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Handler -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Get-BizTalkHandler' {
-    InModuleScope Handler {
+    InModuleScope BizTalk.Administration {
 
         Context 'Get information about BizTalk Server Handlers' {
             It 'Returns information about all handlers associated to a given adapter.' {

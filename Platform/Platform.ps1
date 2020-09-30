@@ -75,5 +75,3 @@ function Get-BizTalkController {
         }
     }
 }
-
-Import-Module BizTalk.Administration\Group

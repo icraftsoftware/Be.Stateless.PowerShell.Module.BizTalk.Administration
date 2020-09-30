@@ -16,7 +16,7 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\HostInstance -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Start-BizTalkHostInstance' {
     BeforeAll {
@@ -25,7 +25,7 @@ Describe 'Start-BizTalkHostInstance' {
         New-BizTalkHost -Name Test_Host_2 -Type InProcess -Group 'BizTalk Application Users'
         New-BizTalkHostInstance -Name Test_Host_2 -User BTS_USER -Password 'p@ssw0rd'
     }
-    InModuleScope HostInstance {
+    InModuleScope BizTalk.Administration {
 
         Context 'When the host instance exists' {
             It 'Starts the host instance.' {

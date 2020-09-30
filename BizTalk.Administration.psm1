@@ -16,6 +16,9 @@
 
 #endregion
 
+using assembly Microsoft.BizTalk.ExplorerOM
+using assembly Microsoft.BizTalk.Operations
+
 Set-StrictMode -Version Latest
 
 <#
@@ -69,3 +72,11 @@ $path = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\BizTalk Server\3.0\' -E
 if ($null -ne $path) {
     $env:Path += ";$(Join-Path $path Tracking)"
 }
+
+. $PSScriptRoot\Adapter\Adapter.ps1
+. $PSScriptRoot\Application\Application.ps1
+. $PSScriptRoot\Group\Group.ps1
+. $PSScriptRoot\Handler\Handler.ps1
+. $PSScriptRoot\Host\Host.ps1
+. $PSScriptRoot\HostInstance\HostInstance.ps1
+. $PSScriptRoot\Platform\Platform.ps1

@@ -16,10 +16,10 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Adapter -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Test-BizTalkAdapter' {
-    InModuleScope Adapter {
+    InModuleScope BizTalk.Administration {
 
         Context 'Test the existence of locally installed adapters' {
             It 'Returns $true based on information from the COM registry.' {

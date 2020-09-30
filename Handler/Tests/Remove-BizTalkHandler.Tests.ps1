@@ -16,14 +16,14 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Handler -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Remove-BizTalkHandler' {
     BeforeAll {
         New-BizTalkHost -Name Test_Host -Type InProcess -Group 'BizTalk Application Users'
         New-BizTalkHandler -Adapter FILE -Host Test_Host -Direction Send
     }
-    InModuleScope Handler {
+    InModuleScope BizTalk.Administration {
 
         Context 'When BizTalk Server Handler exists' {
             It 'Removes the BizTalk Server Handler.' {

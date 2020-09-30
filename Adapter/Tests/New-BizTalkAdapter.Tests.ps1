@@ -16,10 +16,10 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Adapter -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'New-BizTalkAdapter' {
-    InModuleScope Adapter {
+    InModuleScope BizTalk.Administration {
 
         Context 'When adapter is locally installed and not yet registered' {
             It 'Registers the adapter.' {

@@ -16,10 +16,10 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Application -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Remove-BizTalkApplication' {
-    InModuleScope Application {
+    InModuleScope BizTalk.Administration {
 
         Context 'Removing Microsoft BizTalk Server Applications' {
             It 'Skips application removal when it does not exist.' {

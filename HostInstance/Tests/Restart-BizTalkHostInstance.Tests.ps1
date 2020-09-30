@@ -16,14 +16,14 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\HostInstance -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Restart-BizTalkHostInstance' {
     BeforeAll {
         New-BizTalkHost -Name Test_Host -Type InProcess -Group 'BizTalk Application Users'
         New-BizTalkHostInstance -Name Test_Host -User BTS_USER -Password 'p@ssw0rd'
     }
-    InModuleScope HostInstance {
+    InModuleScope BizTalk.Administration {
 
         Context 'When the host instance exists' {
             It 'Does not start a host instance which is stopped.' {

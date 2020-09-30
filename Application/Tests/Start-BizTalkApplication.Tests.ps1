@@ -16,10 +16,10 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Application -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Start-BizTalkApplication' {
-    InModuleScope Application {
+    InModuleScope BizTalk.Administration {
 
         Context 'Starting Microsoft BizTalk Server Applications' {
             It 'Starts an application and implicitly enables and enlists all BizTalk services.' {

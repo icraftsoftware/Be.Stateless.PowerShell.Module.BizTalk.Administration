@@ -16,12 +16,10 @@
 
 #endregion
 
-using assembly Microsoft.BizTalk.ExplorerOM
-
-Import-Module -Name $PSScriptRoot\..\Host -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Test-BizTalkHost' {
-    InModuleScope Host {
+    InModuleScope BizTalk.Administration {
 
         Context 'Testing the existence of BizTalk Server Hosts' {
             It 'Returns $true when the host exists.' {

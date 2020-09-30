@@ -16,10 +16,10 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Application -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Test-BizTalkApplication' {
-    InModuleScope Application {
+    InModuleScope BizTalk.Administration {
 
         Context 'Test Microsoft BizTalk Server Application existence' {
             It 'Returns $true when the application exists.' {

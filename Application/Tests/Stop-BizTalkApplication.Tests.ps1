@@ -16,10 +16,10 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Application -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Stop-BizTalkApplication' {
-    InModuleScope Application {
+    InModuleScope BizTalk.Administration {
 
         Context 'Stopping Microsoft BizTalk Server Applications' {
             It 'Stops an application and implicitly disables and unenlists all BizTalk services.' {

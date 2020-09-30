@@ -16,10 +16,10 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Adapter -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Assert-BizTalkAdapter' {
-    InModuleScope Adapter {
+    InModuleScope BizTalk.Administration {
 
         Context 'Asserting the existence of BizTalk Server Adapters' {
             It 'Does not throw when the adapter exists.' {

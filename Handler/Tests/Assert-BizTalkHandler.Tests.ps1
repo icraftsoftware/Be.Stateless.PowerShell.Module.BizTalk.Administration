@@ -16,10 +16,10 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Handler -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Assert-BizTalkHandler' {
-    InModuleScope Handler {
+    InModuleScope BizTalk.Administration {
 
         Context 'Asserting the existence of BizTalk Server Handlers' {
             It 'Does not throw when the handler exists.' {

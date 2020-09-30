@@ -16,12 +16,10 @@
 
 #endregion
 
-using assembly Microsoft.BizTalk.ExplorerOM
-
-Import-Module -Name $PSScriptRoot\..\Host -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Get-BizTalkHost' {
-    InModuleScope Host {
+    InModuleScope BizTalk.Administration {
 
         Context 'Get information about BizTalk Server Hosts' {
             It 'Returns information about all hosts.' {

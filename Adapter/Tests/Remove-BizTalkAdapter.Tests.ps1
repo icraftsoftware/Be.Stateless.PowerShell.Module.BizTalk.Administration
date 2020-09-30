@@ -16,10 +16,10 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\Adapter -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Remove-BizTalkAdapter' {
-    InModuleScope Adapter {
+    InModuleScope BizTalk.Administration {
 
         Context 'When adapter is registered' {
             It 'Removes the adapter.' {

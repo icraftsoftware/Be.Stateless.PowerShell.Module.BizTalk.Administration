@@ -16,14 +16,14 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\HostInstance -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Assert-BizTalkHostInstance' {
     BeforeAll {
         New-BizTalkHost -Name Test_Host_1 -Type InProcess -Group 'BizTalk Application Users'
         New-BizTalkHostInstance -Name Test_Host_1 -User BTS_USER -Password 'p@ssw0rd' -Disabled
     }
-    InModuleScope HostInstance {
+    InModuleScope BizTalk.Administration {
 
         Context 'When the BizTalk Server Host Instance does not exist' {
             It 'Throws.' {

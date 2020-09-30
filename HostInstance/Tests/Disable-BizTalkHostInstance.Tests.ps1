@@ -16,14 +16,14 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\HostInstance -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Disable-BizTalkHostInstance' {
     BeforeAll {
         New-BizTalkHost -Name Test_Host -Type InProcess -Group 'BizTalk Application Users'
         New-BizTalkHostInstance -Name Test_Host -User BTS_USER -Password 'p@ssw0rd'
     }
-    InModuleScope HostInstance {
+    InModuleScope BizTalk.Administration {
 
         Context 'When Microsoft BizTalk Server Host Instance exists.' {
             It 'Disables the host instance from starting when not already disabled.' {

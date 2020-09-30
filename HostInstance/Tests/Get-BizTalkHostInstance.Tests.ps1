@@ -16,10 +16,10 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\HostInstance -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
 
 Describe 'Get-BizTalkHostInstance' {
-    InModuleScope HostInstance {
+    InModuleScope BizTalk.Administration {
 
         Context 'Get information about BizTalk Server Host Instances' {
             It 'Returns information about a named host instances.' {

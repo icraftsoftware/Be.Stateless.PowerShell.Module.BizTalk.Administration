@@ -60,12 +60,12 @@ function Assert-BizTalkApplication {
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (BizTalk.Administration\Get-BizTalGroupMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
 
         [Parameter(Position = 2, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (BizTalk.Administration\Get-BizTalGroupMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkApplication @PSBoundParameters)) {
@@ -344,12 +344,12 @@ function Test-BizTalkApplication {
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (BizTalk.Administration\Get-BizTalGroupMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
 
         [Parameter(Position = 2, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (BizTalk.Administration\Get-BizTalGroupMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {

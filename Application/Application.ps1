@@ -274,7 +274,7 @@ function Stop-BizTalkApplication {
     Use-Object ($controller = Get-BizTalkController $ManagementDatabaseServer $ManagementDatabaseName) {
         if ($TerminateServiceInstances) {
             $controller.GetServiceInstances() |
-                ForEach-Object -Process { $_ -as [ServiceInstance] } |
+                ForEach-Object -Process { $_ -as [MessageBoxServiceInstance] } |
                 Where-Object -FilterScript { $_.Application -eq $Name -and ($_.InstanceStatus -band ([InstanceStatus]::RunningAll -bor [InstanceStatus]::SuspendedAll)) } |
                 ForEach-Object -Process {
                     Write-Information "Terminating service instance ['$($_.Class)', '$($_.ID)']."
@@ -285,7 +285,7 @@ function Stop-BizTalkApplication {
                 }
         }
         $hasInstance = $controller.GetServiceInstances() |
-            ForEach-Object -Process { $_ -as [ServiceInstance] } |
+            ForEach-Object -Process { $_ -as [MessageBoxServiceInstance] } |
             Where-Object -FilterScript { $_.Application -eq $Name } |
             Test-Any
         if ($hasInstance) {

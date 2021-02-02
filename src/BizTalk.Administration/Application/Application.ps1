@@ -190,7 +190,7 @@ function Remove-BizTalkApplication {
         Write-Information "`t Microsoft BizTalk Server Application '$Name' has already been removed."
     } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Removing application '$Name'")) {
         Write-Information "`t Removing Microsoft BizTalk Server Application '$Name'..."
-        Invoke-Tool -Command { BTSTask RemoveApp -ApplicationName:"$Name" }
+        Invoke-Tool -Command { BTSTask RemoveApp -ApplicationName:`"$Name`" }
         Write-Information "`t Microsoft BizTalk Server Application '$Name' has been removed."
     }
 }

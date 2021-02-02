@@ -28,8 +28,8 @@
     PowerShellVersion     = '5.0'
     NestedModules         = @()
     RequiredAssemblies    = @(
-        'Microsoft.BizTalk.ExplorerOM.dll',
-        'Microsoft.BizTalk.Operations.dll'
+        '.\bin\Microsoft.BizTalk.ExplorerOM.dll',
+        '.\bin\Microsoft.BizTalk.Operations.dll'
     )
     RequiredModules       = @('Exec', 'Psx')
 

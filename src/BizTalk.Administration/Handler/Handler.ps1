@@ -10,7 +10,7 @@
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.u
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
@@ -62,7 +62,7 @@ function Assert-BizTalkHandler {
     if (-not(Test-BizTalkHandler @PSBoundParameters)) {
         throw "Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host does not exist."
     }
-    Write-Verbose "Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host exists."
+    Write-Verbose -Message "Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host exists."
 }
 
 <#
@@ -173,14 +173,14 @@ function New-BizTalkHandler {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkHandler -Adapter $Adapter -Host $Host -Direction $Direction) {
-        Write-Information "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has already been created."
-    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Creating $Direction '$Adapter' handler for '$Host' host")) {
-        Write-Information "`t Creating Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host..."
+        Write-Information -MessageData "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has already been created."
+    } elseif ($PsCmdlet.ShouldProcess($globalMessages.Should_Target, "Creating $Direction '$Adapter' handler for '$Host' host")) {
+        Write-Information -MessageData "`t Creating Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host..."
         $className = Get-HandlerCimClassName -Direction $Direction
         $properties = @{ AdapterName = $Adapter ; HostName = $Host }
         if ($Direction -eq 'Send' -and $Default.IsPresent) { $properties.IsDefault = [bool]$Default }
         New-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName $className -Property $properties | Out-Null
-        Write-Information "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has been created."
+        Write-Information -MessageData "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has been created."
     }
 }
 
@@ -220,14 +220,14 @@ function Remove-BizTalkHandler {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkHandler -Adapter $Adapter -Host $Host -Direction $Direction)) {
-        Write-Information "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has already been removed."
-    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Removing $Direction '$Adapter' handler for '$Host' host")) {
-        Write-Information "`t Removing Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host..."
+        Write-Information -MessageData "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has already been removed."
+    } elseif ($PsCmdlet.ShouldProcess($globalMessages.Should_Target, "Removing $Direction '$Adapter' handler for '$Host' host")) {
+        Write-Information -MessageData "`t Removing Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host..."
         $className = Get-HandlerCimClassName -Direction $Direction
         # TODO will fail if try to remove default send handler
         $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName $className -Filter "AdapterName='$Adapter' and HostName='$Host'"
         Remove-CimInstance -ErrorAction Stop -InputObject $instance
-        Write-Information "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has been removed."
+        Write-Information -MessageData "`t Microsoft BizTalk Server $Direction '$Adapter' handler for '$Host' host has been removed."
     }
 }
 

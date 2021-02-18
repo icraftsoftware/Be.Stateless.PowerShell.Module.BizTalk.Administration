@@ -18,15 +18,24 @@
 
 Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 
-Describe 'Assert-BizTalkAdapter' {
+Describe 'Test-BizTalkServer' {
     InModuleScope BizTalk.Administration {
 
-        Context 'Asserting the existence of BizTalk Server Adapters' {
-            It 'Does not throw when the adapter exists.' {
-                { Assert-BizTalkAdapter -Name FILE -Source Combined } | Should -Not -Throw
+        Context 'When the Server is not a member of the BizTalk Server Group' {
+            It 'Returns $false.' {
+                Test-BizTalkServer -Name Lilas -InformationAction Continue | Should -BeFalse
             }
-            It 'Throws when the adapter does not exist.' {
-                { Assert-BizTalkAdapter -Name WCF-Siebel -Source Combined } | Should -Throw -ExpectedMessage 'Microsoft BizTalk Server Adapter ''WCF-Siebel'' does not exist in Combined source(s).'
+        }
+
+        Context 'When the Server is a member of the BizTalk Server Group' {
+            It 'Returns $true.' {
+                Test-BizTalkServer -Name $env:COMPUTERNAME -InformationAction Continue | Should -BeTrue
+            }
+        }
+
+        Context 'When testing Servers in a BizTalk Server Group from the pipeline' {
+            It 'Returns $true, $false.' {
+                @($env:COMPUTERNAME, 'Lilas') | Test-BizTalkServer | Should -Be @($true, $false)
             }
         }
 

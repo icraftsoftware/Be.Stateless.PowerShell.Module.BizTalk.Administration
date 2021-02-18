@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -10,7 +10,7 @@
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.u
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
@@ -29,12 +29,12 @@ function Get-BizTalkCatalog {
         [Parameter(Position = 0, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalkGroupMgmtDbServer),
 
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalkGroupMgmtDbName)
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     try {
@@ -57,12 +57,12 @@ function Get-BizTalkController {
         [Parameter(Position = 0, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalkGroupMgmtDbServer),
 
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalkGroupMgmtDbName)
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     try {

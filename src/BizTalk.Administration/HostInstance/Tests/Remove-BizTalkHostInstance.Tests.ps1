@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 
 Describe 'Remove-BizTalkHostInstance' {
     BeforeAll {
+        $credential = New-Object -TypeName pscredential -ArgumentList BTS_USER, (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)
         New-BizTalkHost -Name Test_Host_1 -Type Isolated -Group 'BizTalk Isolated Host Users'
-        New-BizTalkHostInstance -Name Test_Host_1 -User BTS_USER -Password 'p@ssw0rd'
+        New-BizTalkHostInstance -Name Test_Host_1 -Credential $credential
         New-BizTalkHost -Name Test_Host_2 -Type InProcess -Group 'BizTalk Application Users'
-        New-BizTalkHostInstance -Name Test_Host_2 -User BTS_USER -Password 'p@ssw0rd' -Started
+        New-BizTalkHostInstance -Name Test_Host_2 -Credential $credential -Started
         New-BizTalkHost -Name Test_Host_3 -Type InProcess -Group 'BizTalk Application Users'
     }
     InModuleScope BizTalk.Administration {
@@ -32,27 +33,24 @@ Describe 'Remove-BizTalkHostInstance' {
             It 'Removes the Isolated host instance.' {
                 Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeTrue
-                { Remove-BizTalkHostInstance -Name Test_Host_1 -InformationAction Continue } | Should -Not -Throw
+                { Remove-BizTalkHostInstance -Name Test_Host_1 } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeFalse
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Removing Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has been removed\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -eq ($hostInstanceMessages.Info_Removing -f 'Test_Host_1', $env:COMPUTERNAME) }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -eq ($hostInstanceMessages.Info_Removed -f 'Test_Host_1', $env:COMPUTERNAME) }
             }
             It 'Removes the InProcess host instance even though it is started.' {
-                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_2 -IsStarted | Should -BeTrue
-                { Remove-BizTalkHostInstance -Name Test_Host_2 -InformationAction Continue } | Should -Not -Throw
+                { Remove-BizTalkHostInstance -Name Test_Host_2 } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_2 | Should -BeFalse
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Removing Microsoft BizTalk Server 'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_2' Host Instance on '$($env:COMPUTERNAME)' server has been removed\." }
             }
         }
 
         Context 'When the host instance does not exist' {
             It 'Skips the host instance removal.' {
-                Mock -CommandName Write-Information
+                Mock -CommandName Write-Warning
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeFalse
-                { Remove-BizTalkHostInstance -Name Test_Host_1 -InformationAction Continue } | Should -Not -Throw
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has already been removed\." }
+                { Remove-BizTalkHostInstance -Name Test_Host_1 } | Should -Not -Throw
+                Should -Invoke -CommandName Write-Warning -ParameterFilter { $Message -eq ($hostInstanceMessages.Error_Not_Found_On_Any_Server -f 'Test_Host_1') }
             }
         }
 
@@ -86,6 +84,12 @@ Describe 'Remove-BizTalkHostInstance' {
                 Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_ServerHost -Filter "HostName='Test_Host_3' and ServerName='$($env:COMPUTERNAME)'" | Should -Not -BeNullOrEmpty
                 Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_ServerHost -Filter "HostName='Test_Host_3' and ServerName='$($env:COMPUTERNAME)'" |
                     Select-Object -ExpandProperty IsMapped | Should -BeFalse
+            }
+        }
+
+        Context 'Removing BizTalk Server Host Instances from the pipeline' {
+            It 'Removes hosts.' {
+                { 'Test_Host', 'Test_Host_2' | Get-BizTalkHostInstance | Remove-BizTalkHostInstance } | Should -Not -Throw
             }
         }
 

@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,36 +16,47 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 
 Describe 'Remove-BizTalkHost' {
     BeforeAll {
-        New-BizTalkHost -Name Test_Host -Type InProcess -Group 'BizTalk Application Users'
+        New-BizTalkHost -Name Test_Host_1 -Type InProcess -Group 'BizTalk Application Users'
+        New-BizTalkHost -Name Test_Host_2 -Type InProcess -Group 'BizTalk Application Users'
+        New-BizTalkHost -Name Test_Host_3 -Type InProcess -Group 'BizTalk Application Users'
     }
     InModuleScope BizTalk.Administration {
 
         Context 'When BizTalk Server Host already exists' {
             It 'Removes the BizTalk Server Host.' {
                 Mock -CommandName Write-Information
-                Test-BizTalkHost -Name Test_Host | Should -BeTrue
-                { Remove-BizTalkHost -Name Test_Host -InformationAction Continue } | Should -Not -Throw
-                Test-BizTalkHost -Name Test_Host | Should -BeFalse
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Removing Microsoft BizTalk Server ''Test_Host'' host\.\.\.' }
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server ''Test_Host'' host has been removed\.' }
+                Test-BizTalkHost -Name Test_Host_1 | Should -BeTrue
+                { Remove-BizTalkHost -Name Test_Host_1 } | Should -Not -Throw
+                Test-BizTalkHost -Name Test_Host_1 | Should -BeFalse
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -eq ($hostMessages.Info_Removing -f 'Test_Host_1') }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -eq ($hostMessages.Info_Removed -f 'Test_Host_1') }
             }
         }
 
         Context 'When BizTalk Server Host does not exist' {
             It 'Skips BizTalk Server Host removal.' {
-                Mock -CommandName Write-Information
-                Test-BizTalkHost -Name Test_Host | Should -BeFalse
-                { Remove-BizTalkHost -Name Test_Host -InformationAction Continue } | Should -Not -Throw
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server ''Test_Host'' host has already been removed\.' }
+                Mock -CommandName Write-Warning
+                Test-BizTalkHost -Name Test_Host_1 | Should -BeFalse
+                { Remove-BizTalkHost -Name Test_Host_1 } | Should -Not -Throw
+                Should -Invoke -CommandName Write-Warning -ParameterFilter { $Message -eq ($hostMessages.Error_Not_Found -f 'Test_Host_1') }
             }
         }
 
+        Context 'Removing BizTalk Server Hosts from the pipeline' {
+            It 'Removes the BizTalk Server Hosts.' {
+                { 'Test_Host_2', 'Test_Host_3' | Get-BizTalkHost | Remove-BizTalkHost } | Should -Not -Throw
+            }
+        }
+
+
     }
     AfterAll {
-        Remove-BizTalkHost -Name Test_Host
+        Remove-BizTalkHost -Name Test_Host_3 -WarningAction SilentlyContinue
+        Remove-BizTalkHost -Name Test_Host_2 -WarningAction SilentlyContinue
+        Remove-BizTalkHost -Name Test_Host_1 -WarningAction SilentlyContinue
     }
 }

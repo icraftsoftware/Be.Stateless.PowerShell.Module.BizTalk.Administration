@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,16 +32,16 @@ Set-StrictMode -Version Latest
     PS> Assert-BizTalkServer -Verbose
     When verbose, this function outputs a message confirming that Microsoft BizTalk Server is installed locally.
 .NOTES
-    © 2020 be.stateless.
+    © 2021 be.stateless.
 #>
-function Assert-BizTalkServer {
+function Assert-BizTalkServerInstalled {
     [CmdletBinding()]
     [OutputType([void])]
     param()
 
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkServer)) { throw 'Microsoft BizTalk Server is not installed locally.' }
-    Write-Verbose 'Microsoft BizTalk Server is installed locally.'
+    Write-Verbose -Message 'Microsoft BizTalk Server is installed locally.'
 }
 
 <#
@@ -52,9 +52,9 @@ function Assert-BizTalkServer {
 .EXAMPLE
     PS> Test-BizTalkServer
 .NOTES
-    © 2020 be.stateless.
+    © 2021 be.stateless.
 #>
-function Test-BizTalkServer {
+function Test-BizTalkServerInstalled {
     [CmdletBinding()]
     [OutputType([bool])]
     param()
@@ -80,3 +80,6 @@ if ($null -ne $path) {
 . $PSScriptRoot\Host\Host.ps1
 . $PSScriptRoot\HostInstance\HostInstance.ps1
 . $PSScriptRoot\Platform\Platform.ps1
+. $PSScriptRoot\Server\Server.ps1
+
+Import-LocalizedData -BindingVariable globalMessages -FileName BizTalk.Administration.Messages.psd1

@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,20 +16,32 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 
 Describe 'Get-BizTalkHostInstance' {
     InModuleScope BizTalk.Administration {
 
-        Context 'Get information about BizTalk Server Host Instances' {
-            It 'Returns information about a named host instances.' {
+        Context 'When the BizTalk Server Host Instance does not exist' {
+            It 'Returns $null.' {
+                Get-BizTalkHostInstance -Name InexistentHost | Should -BeNullOrEmpty
+            }
+        }
+
+        Context 'When the BizTalk Server Host Instances exist' {
+            It 'Returns all host instances.' {
+                Get-BizTalkHostInstance | Measure-Object | Select-Object -ExpandProperty Count | Should -BeGreaterThan 1
+            }
+            It 'Returns a host instance by name.' {
                 Get-BizTalkHostInstance -Name BizTalkServerIsolatedHost | Should -Not -BeNullOrEmpty
             }
-            It 'Returns information about all host instances bound to a server.' {
+            It 'Returns host instances by server.' {
                 Get-BizTalkHostInstance -Server $env:COMPUTERNAME | Measure-Object | Select-Object -ExpandProperty Count | Should -BeGreaterThan 1
             }
-            It 'Returns information about all host instances.' {
-                Get-BizTalkHostInstance | Measure-Object | Select-Object -ExpandProperty Count | Should -BeGreaterThan 1
+        }
+
+        Context 'Retrieving BizTalk Server Host Instances from the pipeline' {
+            It 'Returns host instances.' {
+                'BizTalkServerApplication', 'BizTalkServerIsolatedHost' | Get-BizTalkHostInstance | Should -HaveCount 2
             }
         }
 

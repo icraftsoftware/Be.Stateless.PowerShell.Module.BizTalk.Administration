@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,23 +16,35 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 
 Describe 'Test-BizTalkHost' {
     InModuleScope BizTalk.Administration {
 
-        Context 'Testing the existence of BizTalk Server Hosts' {
-            It 'Returns $true when the host exists.' {
+        Context 'When the BizTalk Server Host does not exist in the BizTalk Server Group' {
+            It 'Returns $false.' {
+                Test-BizTalkHost -Name InexistentHost | Should -BeFalse
+            }
+        }
+
+        Context 'When the BizTalk Server Hosts exist in the BizTalk Server Group' {
+            It 'Returns $true.' {
                 Test-BizTalkHost -Name BizTalkServerApplication | Should -BeTrue
             }
-            It 'Returns $true when the host exists and is of the given type.' {
+            It 'Returns $true if the host is of the given type.' {
                 Test-BizTalkHost -Name BizTalkServerApplication -Type InProcess | Should -BeTrue
             }
-            It 'Returns $false when the host exists but is not of the given type.' {
+            It 'Returns $false if the host is not of the given type.' {
                 Test-BizTalkHost -Name BizTalkServerApplication -Type Isolated | Should -BeFalse
             }
-            It 'Returns $false when the host does not exist.' {
-                Test-BizTalkHost -Name InexistentHost | Should -BeFalse
+            It 'Tests the host object passed in and returns $true if the host is of the given type.' {
+                Test-BizTalkHost -Host @(Get-BizTalkHost -Name BizTalkServerApplication) -Type InProcess | Should -BeTrue
+            }
+        }
+
+        Context 'Testing BizTalk Server Hosts from the pipeline' {
+            It 'Returns test results.' {
+                'BizTalkServerApplication', 'BizTalkServerIsolatedHost' | Get-BizTalkHost | Test-BizTalkHost -Type InProcess | Should -Be $true, $false
             }
         }
 

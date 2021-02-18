@@ -10,7 +10,7 @@
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.u
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
@@ -58,7 +58,7 @@ function Assert-BizTalkAdapter {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkAdapter @PSBoundParameters)) { throw "Microsoft BizTalk Server Adapter '$Name' does not exist in $Source source(s)." }
-    Write-Verbose "Microsoft BizTalk Server Adapter '$Name' exists in $Source source(s)."
+    Write-Verbose -Message "Microsoft BizTalk Server Adapter '$Name' exists in $Source source(s)."
 }
 
 <#
@@ -236,9 +236,9 @@ function New-BizTalkAdapter {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkAdapter -Name $Name -Source BizTalk) {
-        Write-Information "`t Microsoft BizTalk Server '$Name' adapter has already been created."
-    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Creating '$Name' adapter")) {
-        Write-Information "`t Creating Microsoft BizTalk Server '$Name' adapter..."
+        Write-Information -MessageData "`t Microsoft BizTalk Server '$Name' adapter has already been created."
+    } elseif ($PsCmdlet.ShouldProcess($globalMessages.Should_Target, "Creating '$Name' adapter")) {
+        Write-Information -MessageData "`t Creating Microsoft BizTalk Server '$Name' adapter..."
         if ([string]::IsNullOrWhiteSpace($MgmtCLSID)) { $MgmtCLSID = Get-BizTalkAdapter -Name $Name -Source Registry | Select-Object -ExpandProperty MgmtCLSID }
         if ([string]::IsNullOrWhiteSpace($MgmtCLSID)) {
             throw "'$Name' adapter's MgmtCLSID could not be resolved on the local machine. The '$Name' adapter might not be installed on $($env:COMPUTERNAME)."
@@ -253,7 +253,7 @@ function New-BizTalkAdapter {
         if (-not [string]::IsNullOrWhiteSpace($Comment)) { $properties.Comment = $Comment }
         $properties
         New-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Property $properties | Out-Null
-        Write-Information "`t Microsoft BizTalk Server '$Name' adapter has been created."
+        Write-Information -MessageData "`t Microsoft BizTalk Server '$Name' adapter has been created."
     }
 }
 
@@ -280,13 +280,13 @@ function Remove-BizTalkAdapter {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkAdapter -Name $Name -Source BizTalk)) {
-        Write-Information "`t Microsoft BizTalk Server '$Name' adapter has already been removed."
-    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Removing '$Name' adapter")) {
-        Write-Information "`t Removing Microsoft BizTalk Server '$Name' adapter..."
+        Write-Information -MessageData "`t Microsoft BizTalk Server '$Name' adapter has already been removed."
+    } elseif ($PsCmdlet.ShouldProcess($globalMessages.Should_Target, "Removing '$Name' adapter")) {
+        Write-Information -MessageData "`t Removing Microsoft BizTalk Server '$Name' adapter..."
         $filter = if (![string]::IsNullOrWhiteSpace($Name)) { "Name='$Name'" }
         $instance = Get-CimInstance -ErrorAction Stop -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_AdapterSetting -Filter $filter
         Remove-CimInstance -ErrorAction Stop -InputObject $instance
-        Write-Information "`t Microsoft BizTalk Server '$Name' adapter has been removed."
+        Write-Information -MessageData "`t Microsoft BizTalk Server '$Name' adapter has been removed."
     }
 }
 

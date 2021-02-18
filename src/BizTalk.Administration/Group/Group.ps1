@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 Set-StrictMode -Version Latest
 
-function Get-BizTalGroupSettings {
+function Get-BizTalkGroupSettings {
     [CmdletBinding()]
     [OutputType([PSCustomObject])]
     param()
@@ -26,14 +26,14 @@ function Get-BizTalGroupSettings {
     Get-CimInstance -Namespace root\MicrosoftBizTalkServer -ClassName MSBTS_GroupSetting
 }
 
-function Get-BizTalGroupMgmtDbName {
+function Get-BizTalkGroupMgmtDbName {
     [CmdletBinding()]
     [OutputType([string])]
     param()
     Get-CimInstance -Namespace root\MicrosoftBizTalkServer -ClassName MSBTS_GroupSetting | Select-Object -ExpandProperty MgmtDbName
 }
 
-function Get-BizTalGroupMgmtDBServer {
+function Get-BizTalkGroupMgmtDBServer {
     [CmdletBinding()]
     [OutputType([string])]
     param()

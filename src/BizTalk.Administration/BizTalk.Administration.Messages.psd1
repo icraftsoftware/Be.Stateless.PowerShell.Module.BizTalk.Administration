@@ -16,19 +16,6 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
-
-Describe 'Test-BizTalkHandler' {
-    InModuleScope BizTalk.Administration {
-
-        Context 'Testing the existence of BizTalk Server Handlers' {
-            It 'Returns $true when the handler exists.' {
-                Test-BizTalkHandler -Adapter FILE -Host BizTalkServerApplication -Direction Send | Should -BeTrue
-            }
-            It 'Returns $false when the handler does not exist.' {
-                Test-BizTalkHandler -Adapter FTPS -Host BizTalkServerApplication -Direction Send | Should -BeFalse
-            }
-        }
-
-    }
-}
+ConvertFrom-StringData @'
+Should_Target=Microsoft BizTalk Server Group
+'@

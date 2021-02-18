@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -10,7 +10,7 @@
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.u
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
@@ -60,12 +60,12 @@ function Assert-BizTalkApplication {
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalkGroupMgmtDbServer),
 
         [Parameter(Position = 2, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalkGroupMgmtDbName)
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkApplication @PSBoundParameters)) {
@@ -75,7 +75,7 @@ function Assert-BizTalkApplication {
             throw "Microsoft BizTalk Server Application '$Name' does not exist or some the required application refereces '$($References -join ''', ''')' are missing."
         }
     }
-    Write-Verbose "Microsoft BizTalk Server Application '$Name' exists."
+    Write-Verbose -Message "Microsoft BizTalk Server Application '$Name' exists."
 }
 
 <#
@@ -112,12 +112,12 @@ function Get-BizTalkApplication {
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalkGroupMgmtDbServer),
 
         [Parameter(Position = 2, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalkGroupMgmtDbName)
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {
@@ -131,7 +131,7 @@ function Get-BizTalkApplication {
 
 function New-BizTalkApplication {
     [CmdletBinding(SupportsShouldProcess = $true)]
-    [OutputType([void])]
+    [OutputType([Microsoft.BizTalk.ExplorerOM.Application])]
     param(
         [Parameter(Position = 0, Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -150,9 +150,9 @@ function New-BizTalkApplication {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (Test-BizTalkApplication -Name $Name) {
-        Write-Information "`t Microsoft BizTalk Server Application '$Name' has already been created."
-    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Creating application '$Name'")) {
-        Write-Information "`t Creating Microsoft BizTalk Server Application '$Name'..."
+        Write-Information -MessageData "`t Microsoft BizTalk Server Application '$Name' has already been created."
+    } elseif ($PsCmdlet.ShouldProcess($globalMessages.Should_Target, "Creating application '$Name'")) {
+        Write-Information -MessageData "`t Creating Microsoft BizTalk Server Application '$Name'..."
         Use-Object ($catalog = Get-BizTalkCatalog ) {
             try {
                 $application = $catalog.AddNewApplication()
@@ -167,12 +167,13 @@ function New-BizTalkApplication {
                     }
                 }
                 $catalog.SaveChanges()
+                $application
             } catch {
                 $catalog.DiscardChanges()
                 throw
             }
         }
-        Write-Information "`t Microsoft BizTalk Server Application '$Name' has been created."
+        Write-Information -MessageData "`t Microsoft BizTalk Server Application '$Name' has been created."
     }
 }
 
@@ -187,11 +188,11 @@ function Remove-BizTalkApplication {
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     if (-not(Test-BizTalkApplication -Name $Name)) {
-        Write-Information "`t Microsoft BizTalk Server Application '$Name' has already been removed."
-    } elseif ($PsCmdlet.ShouldProcess("Microsoft BizTalk Server Group", "Removing application '$Name'")) {
-        Write-Information "`t Removing Microsoft BizTalk Server Application '$Name'..."
+        Write-Information -MessageData "`t Microsoft BizTalk Server Application '$Name' has already been removed."
+    } elseif ($PsCmdlet.ShouldProcess($globalMessages.Should_Target, "Removing application '$Name'")) {
+        Write-Information -MessageData "`t Removing Microsoft BizTalk Server Application '$Name'..."
         Invoke-Tool -Command { BTSTask RemoveApp -ApplicationName:`"$Name`" }
-        Write-Information "`t Microsoft BizTalk Server Application '$Name' has been removed."
+        Write-Information -MessageData "`t Microsoft BizTalk Server Application '$Name' has been removed."
     }
 }
 
@@ -217,12 +218,12 @@ function Start-BizTalkApplication {
         [Parameter(Position = 3, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalkGroupMgmtDbServer),
 
         [Parameter(Position = 4, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalkGroupMgmtDbName)
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {
@@ -263,12 +264,12 @@ function Stop-BizTalkApplication {
         [Parameter(Position = 3, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalkGroupMgmtDbServer),
 
         [Parameter(Position = 4, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalkGroupMgmtDbName)
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Use-Object ($controller = Get-BizTalkController $ManagementDatabaseServer $ManagementDatabaseName) {
@@ -277,7 +278,7 @@ function Stop-BizTalkApplication {
                 ForEach-Object -Process { $_ -as [MessageBoxServiceInstance] } |
                 Where-Object -FilterScript { $_.Application -eq $Name -and ($_.InstanceStatus -band ([InstanceStatus]::RunningAll -bor [InstanceStatus]::SuspendedAll)) } |
                 ForEach-Object -Process {
-                    Write-Information "Terminating service instance ['$($_.Class)', '$($_.ID)']."
+                    Write-Information -MessageData "Terminating service instance ['$($_.Class)', '$($_.ID)']."
                     result = $controller.TerminateInstance($_.ID)
                     if (result -ne [CompletionStatus]::Succeeded -and $_.Class -ne [ServiceClass::RoutingFailure]) {
                         throw "Cannot stop application '$Name': failed to terminate service instance ['$($_.Class)', '$($_.ID)']."
@@ -289,7 +290,7 @@ function Stop-BizTalkApplication {
             Where-Object -FilterScript { $_.Application -eq $Name } |
             Test-Any
         if ($hasInstance) {
-            throw "Cannot stop application '$Name' because it has running service intances."
+            throw "Cannot stop application '$Name' because it has running service instances."
         }
     }
     Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {
@@ -344,12 +345,12 @@ function Test-BizTalkApplication {
         [Parameter(Position = 1, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseServer = (Get-BizTalGroupMgmtDbServer),
+        $ManagementDatabaseServer = (Get-BizTalkGroupMgmtDbServer),
 
         [Parameter(Position = 2, Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $ManagementDatabaseName = (Get-BizTalGroupMgmtDbName)
+        $ManagementDatabaseName = (Get-BizTalkGroupMgmtDbName)
     )
     Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     Use-Object ($catalog = Get-BizTalkCatalog $ManagementDatabaseServer $ManagementDatabaseName) {

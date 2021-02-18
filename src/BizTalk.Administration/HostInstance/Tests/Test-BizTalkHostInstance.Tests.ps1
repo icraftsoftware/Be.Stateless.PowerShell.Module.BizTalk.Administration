@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 
 Describe 'Test-BizTalkHostInstance' {
     BeforeAll {
         New-BizTalkHost -Name Test_Host_1 -Type InProcess -Group 'BizTalk Application Users'
-        New-BizTalkHostInstance -Name Test_Host_1 -User BTS_USER -Password 'p@ssw0rd' -Disabled
+        New-BizTalkHostInstance -Name Test_Host_1 -Credential (New-Object -TypeName pscredential -ArgumentList BTS_USER, (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)) -Disabled
     }
     InModuleScope BizTalk.Administration {
 
@@ -94,6 +94,12 @@ Describe 'Test-BizTalkHostInstance' {
             }
             It 'Returns $false when the host instance is disabled but should not be stopped.' {
                 Test-BizTalkHostInstance -Name Test_Host_1 -IsDisabled -IsStopped:$false | Should -BeFalse
+            }
+        }
+
+        Context 'Testing BizTalk Server Host Instances from the pipeline' {
+            It 'Returns test results.' {
+                'BizTalkServerApplication', 'BizTalkServerIsolatedHost' | Get-BizTalkHostInstance | Test-BizTalkHostInstance -IsStarted | Should -Be $true, $false
             }
         }
 

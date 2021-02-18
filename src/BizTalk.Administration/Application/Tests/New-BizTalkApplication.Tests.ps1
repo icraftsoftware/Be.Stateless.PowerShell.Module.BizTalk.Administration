@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 
 Describe 'New-BizTalkApplication' {
     InModuleScope BizTalk.Administration {
@@ -33,6 +33,12 @@ Describe 'New-BizTalkApplication' {
                 Mock -CommandName Write-Information
                 { New-BizTalkApplication -Name 'Dummy.BizTalk.Application' -InformationAction Continue } | Should -Not -Throw
                 Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match 'Microsoft BizTalk Server Application ''Dummy.BizTalk.Application'' has already been created\.$' }
+                Remove-BizTalkApplication -Name 'Dummy.BizTalk.Application'
+            }
+            It 'Returns the application' {
+                $application = New-BizTalkApplication -Name 'Dummy.BizTalk.Application'
+                $application | Should -Not -BeNull
+                $application | Should -BeOfType [Microsoft.BizTalk.ExplorerOM.Application]
                 Remove-BizTalkApplication -Name 'Dummy.BizTalk.Application'
             }
         }

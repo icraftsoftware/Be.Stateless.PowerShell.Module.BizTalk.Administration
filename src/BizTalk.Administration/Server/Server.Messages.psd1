@@ -16,19 +16,7 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
-
-Describe 'Test-BizTalkHandler' {
-    InModuleScope BizTalk.Administration {
-
-        Context 'Testing the existence of BizTalk Server Handlers' {
-            It 'Returns $true when the handler exists.' {
-                Test-BizTalkHandler -Adapter FILE -Host BizTalkServerApplication -Direction Send | Should -BeTrue
-            }
-            It 'Returns $false when the handler does not exist.' {
-                Test-BizTalkHandler -Adapter FTPS -Host BizTalkServerApplication -Direction Send | Should -BeFalse
-            }
-        }
-
-    }
-}
+ConvertFrom-StringData @'
+Error_None_Found=Could not find any Server in Microsoft BizTalk Server Group.
+Error_Not_Found=Could not find Server '{0}' in Microsoft BizTalk Server Group.
+'@

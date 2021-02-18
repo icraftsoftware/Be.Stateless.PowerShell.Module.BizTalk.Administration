@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 
 Describe 'New-BizTalkHostInstance' {
     BeforeAll {
@@ -25,6 +25,8 @@ Describe 'New-BizTalkHostInstance' {
         New-BizTalkHost -Name Test_Host_3 -Type InProcess -Group 'BizTalk Application Users'
         New-BizTalkHost -Name Test_Host_4 -Type Isolated -Group 'BizTalk Isolated Host Users'
         New-BizTalkHost -Name Test_Host_5 -Type InProcess -Group 'BizTalk Application Users'
+        New-BizTalkHost -Name Test_Host_6 -Type InProcess -Group 'BizTalk Application Users'
+        $script:credential = New-Object -TypeName pscredential -ArgumentList BTS_USER, (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)
     }
     InModuleScope BizTalk.Administration {
 
@@ -32,28 +34,30 @@ Describe 'New-BizTalkHostInstance' {
             It 'Creates a new InProcess host instance.' {
                 Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeFalse
-                { New-BizTalkHostInstance -Name Test_Host_1 -User BTS_USER -Password 'p@ssw0rd' -InformationAction Continue } | Should -Not -Throw
+                { New-BizTalkHostInstance -Name Test_Host_1 -Credential $credential -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeTrue
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Creating Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has been created\." }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -eq ($hostInstanceMessages.Info_Creating -f 'Test_Host_1', $env:COMPUTERNAME) }
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -eq ($hostInstanceMessages.Info_Created -f 'Test_Host_1', $env:COMPUTERNAME) }
             }
             It 'Creates a new InProcess host instance and starts it.' {
                 Test-BizTalkHostInstance -Name Test_Host_2 | Should -BeFalse
-                { New-BizTalkHostInstance -Name Test_Host_2 -User BTS_USER -Password 'p@ssw0rd' -Started } | Should -Not -Throw
+                { New-BizTalkHostInstance -Name Test_Host_2 -Credential $credential -Started } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_2 -IsStarted | Should -BeTrue
             }
             It 'Creates a new InProcess host instance and disables it from starting.' {
                 Test-BizTalkHostInstance -Name Test_Host_3 | Should -BeFalse
-                { New-BizTalkHostInstance -Name Test_Host_3 -User BTS_USER -Password 'p@ssw0rd' -Disabled } | Should -Not -Throw
+                { New-BizTalkHostInstance -Name Test_Host_3 -Credential $credential -Disabled } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_3 -IsDisabled | Should -BeTrue
             }
             It 'Creates a new Isolated host instance' {
-                Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_4 | Should -BeFalse
-                { New-BizTalkHostInstance -Name Test_Host_4 -User BTS_USER -Password 'p@ssw0rd' -InformationAction Continue } | Should -Not -Throw
+                { New-BizTalkHostInstance -Name Test_Host_4 -Credential $credential -InformationAction Continue } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_4 | Should -BeTrue
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Creating Microsoft BizTalk Server 'Test_Host_4' Host Instance on '$($env:COMPUTERNAME)' server\.\.\." }
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_4' Host Instance on '$($env:COMPUTERNAME)' server has been created\." }
+            }
+            It 'Returns the host instance' {
+                $instance = New-BizTalkHostInstance -Name Test_Host_6 -Credential $credential -Started
+                $instance | Should -Not -BeNull
+                Test-BizTalkHostInstance -HostInstance $instance -IsStarted | Should -BeTrue
             }
         }
 
@@ -61,13 +65,13 @@ Describe 'New-BizTalkHostInstance' {
             It 'Skips the host instance creation.' {
                 Mock -CommandName Write-Information
                 Test-BizTalkHostInstance -Name Test_Host_1 | Should -BeTrue
-                { New-BizTalkHostInstance -Name Test_Host_1 -User BTS_USER -Password 'p@ssw0rd' -InformationAction Continue } | Should -Not -Throw
-                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -match "Microsoft BizTalk Server 'Test_Host_1' Host Instance on '$($env:COMPUTERNAME)' server has already been created\." }
+                { New-BizTalkHostInstance -Name Test_Host_1 -Credential $credential -InformationAction Continue } | Should -Not -Throw
+                Should -Invoke -CommandName Write-Information -ParameterFilter { $MessageData -eq ($hostInstanceMessages.Info_Existing -f 'Test_Host_1', $env:COMPUTERNAME) }
             }
         }
 
         Context 'When the host instance creation fails and is partially created' {
-            It 'Cleans up partially created host intance.' {
+            It 'Cleans up partially created host instance.' {
                 Test-BizTalkHostInstance -Name Test_Host_5 | Should -BeFalse
 
                 { New-BizTalkHostInstance -Name Test_Host_5 -User BTS_USER -Password 'wrong-password' } | Should -Throw
@@ -83,7 +87,9 @@ Describe 'New-BizTalkHostInstance' {
 
     }
     AfterAll {
+        Stop-BizTalkHostInstance -Name Test_Host_6
         Stop-BizTalkHostInstance -Name Test_Host_2
+        Remove-BizTalkHost -Name Test_Host_6
         Remove-BizTalkHost -Name Test_Host_5
         Remove-BizTalkHost -Name Test_Host_4
         Remove-BizTalkHost -Name Test_Host_3

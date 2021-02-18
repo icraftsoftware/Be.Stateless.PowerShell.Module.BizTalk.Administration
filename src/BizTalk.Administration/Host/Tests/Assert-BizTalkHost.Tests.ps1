@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,17 +16,35 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 
 Describe 'Assert-BizTalkHost' {
     InModuleScope BizTalk.Administration {
 
-        Context 'Asserting the existence of BizTalk Server Hosts' {
-            It 'Does not throw when the host exists.' {
+        Context 'When the BizTalk Server Host does not exist in the BizTalk Server Group' {
+            It 'Throws.' {
+                { Assert-BizTalkHost -Name InexistentHost } | Should -Throw -ExpectedMessage ($hostMessages.Error_Not_Found -f 'InexistentHost')
+            }
+        }
+
+        Context 'When the BizTalk Server Hosts exist in the BizTalk Server Group' {
+            It 'Does not throw.' {
                 { Assert-BizTalkHost -Name BizTalkServerApplication } | Should -Not -Throw
             }
-            It 'Throws when the host does not exist.' {
-                { Assert-BizTalkHost -Name InexistentHost } | Should -Throw -ExpectedMessage 'Microsoft BizTalk Server Host ''InexistentHost'' does not exist.'
+            It 'Does not throw if the host is of the expected type.' {
+                { Assert-BizTalkHost -Name BizTalkServerApplication -Type InProcess } | Should -Not -Throw
+            }
+            It 'Throws if the host is not of the expected type.' {
+                { Assert-BizTalkHost -Name BizTalkServerApplication -Type Isolated } | Should -Throw -ExpectedMessage ($hostMessages.Error_Type -f 'BizTalkServerApplication')
+            }
+            It 'Asserts the host object passed in and does not throw if the host is of the expected type.' {
+                { Assert-BizTalkHost -Host @(Get-BizTalkHost -Name BizTalkServerApplication) -Type InProcess } | Should -Not -Throw
+            }
+        }
+
+        Context 'Asserting BizTalk Server Hosts from the pipeline' {
+            It 'Throws.' {
+                { 'BizTalkServerApplication', 'BizTalkServerIsolatedHost' | Get-BizTalkHost | Assert-BizTalkHost -Type InProcess } | Should -Throw -ExpectedMessage ($hostMessages.Error_Type -f 'BizTalkServerIsolatedHost')
             }
         }
 

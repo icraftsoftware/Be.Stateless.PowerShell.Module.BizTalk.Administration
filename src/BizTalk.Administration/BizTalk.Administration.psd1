@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,8 +37,8 @@
     CmdletsToExport       = @()
     FunctionsToExport     = @(
         # RootModule
-        'Assert-BizTalkServer',
-        'Test-BizTalkServer',
+        'Assert-BizTalkServerInstalled',
+        'Test-BizTalkServerInstalled',
         # Adapter.ps1
         'Assert-BizTalkAdapter',
         'Get-BizTalkAdapter',
@@ -54,7 +54,7 @@
         'Stop-BizTalkApplication',
         'Test-BizTalkApplication',
         # Group.ps1
-        'Get-BizTalGroupSettings',
+        'Get-BizTalkGroupSettings',
         # Handler.ps1
         'Assert-BizTalkHandler',
         'Get-BizTalkHandler',
@@ -81,7 +81,11 @@
         'Test-BizTalkHostInstance',
         # Platform.ps1
         'Get-BizTalkCatalog',
-        'Get-BizTalkController'
+        'Get-BizTalkController',
+        # Server.ps1
+        'Assert-BizTalkServer',
+        'Get-BizTalkServer',
+        'Test-BizTalkServer'
     )
     VariablesToExport     = @()
     PrivateData           = @{

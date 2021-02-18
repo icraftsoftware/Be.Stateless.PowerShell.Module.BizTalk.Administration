@@ -1,6 +1,6 @@
 #region Copyright & License
 
-# Copyright © 2012 - 2020 François Chabot
+# Copyright © 2012 - 2021 François Chabot
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,27 +16,36 @@
 
 #endregion
 
-Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psm1 -Force
+Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 
 Describe 'Get-BizTalkHost' {
     InModuleScope BizTalk.Administration {
 
-        Context 'Get information about BizTalk Server Hosts' {
-            It 'Returns information about all hosts.' {
+        Context 'When the BizTalk Server Host does not exist in the BizTalk Server Group' {
+            It 'Returns $null.' {
+                Get-BizTalkHost -Name InexistentHost | Should -BeNullOrEmpty
+            }
+        }
+
+        Context 'When the BizTalk Server Hosts do exist in the BizTalk Server Group' {
+            It 'Returns all hosts.' {
                 Get-BizTalkHost | Measure-Object | Select-Object -ExpandProperty Count | Should -BeGreaterThan 1
             }
-            It 'Returns information about a given host.' {
+            It 'Returns a host.' {
                 $btsHost = Get-BizTalkHost -Name BizTalkServerApplication
                 $btsHost | Should -HaveCount 1
                 $btsHost | Get-Member -MemberType Properties | ForEach-Object Name | Should -Not -Contain MessageDeliveryMaximumDelay
             }
-            It 'Returns detailed information about a given host.' {
+            It 'Returns a host settings.' {
                 $btsHost = Get-BizTalkHost -Name BizTalkServerApplication -Detailed
                 $btsHost | Should -HaveCount 1
                 $btsHost | Get-Member -MemberType Properties | ForEach-Object Name | Should -Contain MessageDeliveryMaximumDelay
             }
-            It 'Returns nothing when the host does not exist.' {
-                Get-BizTalkHost -Name InexistentHost | Should -BeNullOrEmpty
+        }
+
+        Context 'Retrieving BizTalk Server Hosts from the pipeline' {
+            It 'Returns hosts.' {
+                'BizTalkServerApplication', 'BizTalkServerIsolatedHost' | Get-BizTalkHost -Detailed | Should -HaveCount 2
             }
         }
 

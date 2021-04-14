@@ -21,7 +21,7 @@ Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 Describe 'Enable-BizTalkHostInstance' {
     BeforeAll {
         New-BizTalkHost -Name Test_Host -Type InProcess -Group 'BizTalk Application Users'
-        New-BizTalkHostInstance -Name Test_Host -Credential (New-Object -TypeName pscredential -ArgumentList BTS_USER, (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)) -Disabled
+        New-BizTalkHostInstance -Name Test_Host -Credential (New-Object -TypeName pscredential -ArgumentList '.\BTS_USER', (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)) -Disabled
     }
     InModuleScope BizTalk.Administration {
 

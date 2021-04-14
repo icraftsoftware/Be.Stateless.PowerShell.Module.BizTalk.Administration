@@ -409,7 +409,7 @@ function New-BizTalkHostInstance {
                     MgmtDbServerOverride = ''
                 }
 
-                $arguments = @{ GrantLogOnAsService = $true ; Logon = $Credential.GetNetworkCredential().UserName ; Password = $Credential.GetNetworkCredential().Password }
+                $arguments = @{ GrantLogOnAsService = $true ; Logon = $Credential.UserName ; Password = $Credential.GetNetworkCredential().Password }
                 if (Test-GmsaAccountSupport) { $arguments.IsGmsaAccount = $false }
                 Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Install -Arguments $arguments -Confirm:$false | Out-Null
 

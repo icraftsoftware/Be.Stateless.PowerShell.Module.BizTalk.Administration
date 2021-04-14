@@ -26,7 +26,7 @@ Describe 'New-BizTalkHostInstance' {
         New-BizTalkHost -Name Test_Host_4 -Type Isolated -Group 'BizTalk Isolated Host Users'
         New-BizTalkHost -Name Test_Host_5 -Type InProcess -Group 'BizTalk Application Users'
         New-BizTalkHost -Name Test_Host_6 -Type InProcess -Group 'BizTalk Application Users'
-        $script:credential = New-Object -TypeName pscredential -ArgumentList BTS_USER, (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)
+        $script:credential = New-Object -TypeName pscredential -ArgumentList '.\BTS_USER', (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)
     }
     InModuleScope BizTalk.Administration {
 
@@ -51,7 +51,7 @@ Describe 'New-BizTalkHostInstance' {
             }
             It 'Creates a new Isolated host instance' {
                 Test-BizTalkHostInstance -Name Test_Host_4 | Should -BeFalse
-                { New-BizTalkHostInstance -Name Test_Host_4 -Credential $credential -InformationAction Continue } | Should -Not -Throw
+                { New-BizTalkHostInstance -Name Test_Host_4 -Credential $credential } | Should -Not -Throw
                 Test-BizTalkHostInstance -Name Test_Host_4 | Should -BeTrue
             }
             It 'Returns the host instance' {
@@ -74,7 +74,7 @@ Describe 'New-BizTalkHostInstance' {
             It 'Cleans up partially created host instance.' {
                 Test-BizTalkHostInstance -Name Test_Host_5 | Should -BeFalse
 
-                { New-BizTalkHostInstance -Name Test_Host_5 -User BTS_USER -Password 'wrong-password' } | Should -Throw
+                { New-BizTalkHostInstance -Name Test_Host_5 -User '.\BTS_USER' -Password 'wrong-password' } | Should -Throw
 
                 Test-BizTalkHostInstance -Name Test_Host_5 | Should -BeFalse
                 Get-CimInstance -Namespace root/MicrosoftBizTalkServer -ClassName MSBTS_HostInstance -Filter "HostName='Test_Host_5' and RunningServer='$($env:COMPUTERNAME)'" | Should -BeNullOrEmpty

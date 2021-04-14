@@ -20,7 +20,7 @@ Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 
 Describe 'Remove-BizTalkHostInstance' {
     BeforeAll {
-        $credential = New-Object -TypeName pscredential -ArgumentList BTS_USER, (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)
+        $credential = New-Object -TypeName pscredential -ArgumentList '.\BTS_USER', (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)
         New-BizTalkHost -Name Test_Host_1 -Type Isolated -Group 'BizTalk Isolated Host Users'
         New-BizTalkHostInstance -Name Test_Host_1 -Credential $credential
         New-BizTalkHost -Name Test_Host_2 -Type InProcess -Group 'BizTalk Application Users'
@@ -71,7 +71,7 @@ Describe 'Remove-BizTalkHostInstance' {
                     MgmtDbNameOverride   = ''
                     MgmtDbServerOverride = ''
                 }
-                $arguments = @{ GrantLogOnAsService = $true ; Logon = 'BTS_USER' ; Password = 'wrong-password' }
+                $arguments = @{ GrantLogOnAsService = $true ; Logon = '.\BTS_USER' ; Password = 'wrong-password' }
                 if (Test-GmsaAccountSupport) { $arguments.IsGmsaAccount = $false }
                 { Invoke-CimMethod -ErrorAction Stop -InputObject $hostInstance -MethodName Install -Arguments $arguments | Out-Null } | Should -Throw
                 Test-BizTalkHostInstance -Name Test_Host_3 | Should -BeTrue

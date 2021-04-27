@@ -71,7 +71,7 @@ function Assert-BizTalkHost {
     Begin {
         Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
         if ($PSCmdlet.ParameterSetName -eq 'by-filter') { $BizTalkHost = @(Enumerate-BizTalkHost -Name $Name -UserBoundParameters $PSBoundParameters -ErrorAction Stop -WarningAction SilentlyContinue) }
-        $arguments = @{}
+        $arguments = @{ }
         if ($PSBoundParameters.ContainsKey('Type')) { $arguments.Type = $Type }
     }
     Process {
@@ -511,7 +511,7 @@ function Enumerate-BizTalkHost {
             }
         }
     }
-    $arguments = @{} + $PSBoundParameters
+    $arguments = @{ } + $PSBoundParameters
     $arguments.Remove('UserBoundParameters') | Out-Null
     if ($UserBoundParameters.ContainsKey('ErrorAction')) { $arguments.ErrorAction = $UserBoundParameters.ErrorAction }
     if ($UserBoundParameters.ContainsKey('WarningAction')) { $arguments.WarningAction = $UserBoundParameters.WarningAction }

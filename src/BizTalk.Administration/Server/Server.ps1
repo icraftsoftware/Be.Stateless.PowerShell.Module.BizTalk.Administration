@@ -167,7 +167,7 @@ function Enumerate-BizTalkServer {
         }
     }
 
-    $arguments = @{} + $PSBoundParameters
+    $arguments = @{ } + $PSBoundParameters
     $arguments.Remove('UserBoundParameters') | Out-Null
     if ($UserBoundParameters.ContainsKey('ErrorAction')) { $arguments.ErrorAction = $UserBoundParameters.ErrorAction }
     if ($UserBoundParameters.ContainsKey('WarningAction')) { $arguments.WarningAction = $UserBoundParameters.WarningAction }

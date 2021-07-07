@@ -354,14 +354,14 @@ function New-BizTalkHostInstance {
         [Parameter(Mandatory = $true)]
         [ArgumentCompleter( { Get-BizTalkHost | Select-Object -ExpandProperty Name } )]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( { Test-BizTalkHost -Name $_ })]
+        [ValidateScript( { Test-BizTalkHost -Name $_ } )]
         [string]
         $Name,
 
         [Parameter(Mandatory = $false)]
         [ArgumentCompleter( { Get-BizTalkServer | Select-Object -ExpandProperty Name } )]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( { Test-BizTalkServer -Name $_ })]
+        [ValidateScript( { Test-BizTalkServer -Name $_ } )]
         [string]
         $Server = $Env:COMPUTERNAME,
 

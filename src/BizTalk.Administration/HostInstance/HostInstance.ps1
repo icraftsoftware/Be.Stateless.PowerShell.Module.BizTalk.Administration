@@ -870,7 +870,7 @@ function Enumerate-BizTalkHostInstance {
         $Server,
 
         [Parameter(Mandatory = $true)]
-        [hashtable]
+        [HashTable]
         $UserBoundParameters
     )
 

@@ -96,6 +96,10 @@ function Assert-BizTalkHost {
 .EXAMPLE
     PS> Get-BizTalkHost
 .EXAMPLE
+    PS> Get-BizTalkHost | Where-Object { $_ | Test-BizTalkHost -Type InProcess }
+.EXAMPLE
+    PS> Get-BizTalkHost -Type InProcess
+.EXAMPLE
     PS> Get-BizTalkHost -Name 'Transmit Host'
 .EXAMPLE
     PS> Get-BizTalkHost -Name 'Transmit Host' -Detailed
@@ -113,14 +117,18 @@ function Get-BizTalkHost {
 
         [Parameter(Mandatory = $false)]
         [switch]
-        $Detailed
+        $Detailed,
+
+        [Parameter(Mandatory = $false)]
+        [HostType]
+        $Type
     )
     Begin {
         Resolve-ActionPreference -Cmdlet $PSCmdlet -SessionState $ExecutionContext.SessionState
     }
     Process {
         Enumerate-BizTalkHost -Name $Name -Detailed:$Detailed -UserBoundParameters $PSBoundParameters -ErrorAction SilentlyContinue -WarningAction SilentlyContinue |
-            Where-Object -FilterScript { $_ }
+            Where-Object -FilterScript { [bool]$_ -and (-not $PSBoundParameters.ContainsKey('Type') -or $_.HostType -eq $Type) }
     }
 }
 
@@ -430,8 +438,8 @@ function Update-BizTalkHost {
             if ($x86.IsPresent) {
                 $subject = "'$($currentHost.Name)' host's 32-bit only restriction"
                 Set-BizTalkHostProperty -BizTalkHost $currentHost -Property IsHost32BitOnly -Value $x86 `
-                    -ActionToPerform ("{1} {0}" -f $Subject, (@('Enabling', 'Disabling')[!$x86])) `
-                    -PerformedAction ("{0} has been {1}" -f $Subject, (@('enabled', 'disabled')[!$x86]))
+                    -ActionToPerform ('{1} {0}' -f $Subject, (@('Enabling', 'Disabling')[!$x86])) `
+                    -PerformedAction ('{0} has been {1}' -f $Subject, (@('enabled', 'disabled')[!$x86]))
             }
 
             if ($Default.IsPresent -and -not $currentHost.IsDefault) {
@@ -443,15 +451,15 @@ function Update-BizTalkHost {
             if ($Tracking.IsPresent) {
                 $subject = "'$($currentHost.Name)' host's Tracking capability"
                 Set-BizTalkHostProperty -BizTalkHost $currentHost -Property HostTracking -Value $Tracking `
-                    -ActionToPerform ("{1} {0}" -f $Subject, (@('Enabling', 'Disabling')[!$Tracking])) `
-                    -PerformedAction ("{0} has been {1}" -f $Subject, (@('enabled', 'disabled')[!$Tracking]))
+                    -ActionToPerform ('{1} {0}' -f $Subject, (@('Enabling', 'Disabling')[!$Tracking])) `
+                    -PerformedAction ('{0} has been {1}' -f $Subject, (@('enabled', 'disabled')[!$Tracking]))
             }
 
             if ($Trusted.IsPresent) {
                 $subject = "'$($currentHost.Name)' host's Trusted Authentication"
                 Set-BizTalkHostProperty -BizTalkHost $currentHost -Property AuthTrusted -Value $Trusted `
-                    -ActionToPerform ("{1} {0}" -f $Subject, (@('Enabling', 'Disabling')[!$Trusted])) `
-                    -PerformedAction ("{0} has been {1}" -f $Subject, (@('enabled', 'disabled')[!$Trusted]))
+                    -ActionToPerform ('{1} {0}' -f $Subject, (@('Enabling', 'Disabling')[!$Trusted])) `
+                    -PerformedAction ('{0} has been {1}' -f $Subject, (@('enabled', 'disabled')[!$Trusted]))
             }
         }
     }
@@ -474,7 +482,7 @@ function Enumerate-BizTalkHost {
         $Detailed,
 
         [Parameter(Mandatory = $true)]
-        [hashtable]
+        [HashTable]
         $UserBoundParameters
     )
     function Enumerate-BizTalkHostCore {

@@ -36,8 +36,18 @@ Describe 'Get-BizTalkHost' {
                 $btsHost | Should -HaveCount 1
                 $btsHost | Get-Member -MemberType Properties | ForEach-Object Name | Should -Not -Contain MessageDeliveryMaximumDelay
             }
+            It 'Returns an isolated host.' {
+                $btsHost = Get-BizTalkHost -Type Isolated
+                $btsHost | Should -HaveCount 1
+                $btsHost | Get-Member -MemberType Properties | ForEach-Object Name | Should -Not -Contain MessageDeliveryMaximumDelay
+            }
             It 'Returns a host settings.' {
                 $btsHost = Get-BizTalkHost -Name BizTalkServerApplication -Detailed
+                $btsHost | Should -HaveCount 1
+                $btsHost | Get-Member -MemberType Properties | ForEach-Object Name | Should -Contain MessageDeliveryMaximumDelay
+            }
+            It 'Returns an isolated host settings.' {
+                $btsHost = Get-BizTalkHost -Type Isolated -Detailed
                 $btsHost | Should -HaveCount 1
                 $btsHost | Get-Member -MemberType Properties | ForEach-Object Name | Should -Contain MessageDeliveryMaximumDelay
             }

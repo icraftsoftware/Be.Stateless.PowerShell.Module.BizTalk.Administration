@@ -133,7 +133,7 @@ function Enumerate-BizTalkServer {
         $Name,
 
         [Parameter(Mandatory = $true)]
-        [hashtable]
+        [HashTable]
         $UserBoundParameters
     )
 

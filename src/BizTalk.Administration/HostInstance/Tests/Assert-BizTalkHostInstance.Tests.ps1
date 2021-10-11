@@ -1,4 +1,4 @@
-#region Copyright & License
+﻿#region Copyright & License
 
 # Copyright © 2012 - 2021 François Chabot
 #
@@ -21,7 +21,7 @@ Import-Module -Name $PSScriptRoot\..\..\BizTalk.Administration.psd1 -Force
 Describe 'Assert-BizTalkHostInstance' {
     BeforeAll {
         New-BizTalkHost -Name Test_Host_1 -Type InProcess -Group 'BizTalk Application Users'
-        New-BizTalkHostInstance -Name Test_Host_1 -Credential (New-Object -TypeName pscredential -ArgumentList '.\BTS_USER', (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)) -Disabled
+        New-BizTalkHostInstance -Name Test_Host_1 -Credential (New-Object -TypeName PSCredential -ArgumentList '.\BTS_USER', (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)) -Disabled
     }
     InModuleScope BizTalk.Administration {
 

@@ -1,4 +1,4 @@
-#region Copyright & License
+﻿#region Copyright & License
 
 # Copyright © 2012 - 2021 François Chabot
 #
@@ -26,7 +26,7 @@ Describe 'New-BizTalkHostInstance' {
         New-BizTalkHost -Name Test_Host_4 -Type Isolated -Group 'BizTalk Isolated Host Users'
         New-BizTalkHost -Name Test_Host_5 -Type InProcess -Group 'BizTalk Application Users'
         New-BizTalkHost -Name Test_Host_6 -Type InProcess -Group 'BizTalk Application Users'
-        $script:credential = New-Object -TypeName pscredential -ArgumentList '.\BTS_USER', (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)
+        $script:credential = New-Object -TypeName PSCredential -ArgumentList '.\BTS_USER', (ConvertTo-SecureString p@ssw0rd -AsPlainText -Force)
     }
     InModuleScope BizTalk.Administration {
 

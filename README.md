@@ -1,8 +1,8 @@
-# Be.Stateless.PowerShell.Module.BizTalk.Administration
+﻿# Be.Stateless.PowerShell.Module.BizTalk.Administration
 
 [![Build Status](https://dev.azure.com/icraftsoftware/be.stateless/_apis/build/status/Be.Stateless.PowerShell.Module.BizTalk.Administration%20Manual%20Release?branchName=master)](https://dev.azure.com/icraftsoftware/be.stateless/_build/latest?definitionId=28&branchName=master)
-[![GitHub Release](https://img.shields.io/github/v/release/icraftsoftware/Be.Stateless.PowerShell.Module.BizTalk.Administration?label=Release)](https://github.com/icraftsoftware/Be.Stateless.PowerShell.Module.BizTalk.Administration/releases/latest)
-[![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/BizTalk.Administration.svg?style=flat)](https://www.powershellgallery.com/packages/BizTalk.Administration/)
+[![GitHub Release](https://img.shields.io/github/v/release/icraftsoftware/Be.Stateless.PowerShell.Module.BizTalk.Administration?label=Release&logo=github)](https://github.com/icraftsoftware/Be.Stateless.PowerShell.Module.BizTalk.Administration/releases/latest)
+[![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/BizTalk.Administration.svg?style=flat&logo=powershell)](https://www.powershellgallery.com/packages/BizTalk.Administration)
 
 Commands to administrate, configure, and explore BizTalk Server.
 

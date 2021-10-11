@@ -1,4 +1,4 @@
-#region Copyright & License
+﻿#region Copyright & License
 
 # Copyright © 2012 - 2021 François Chabot
 #
@@ -333,11 +333,11 @@ function Get-BizTalkHostInstance {
 .EXAMPLE
     PS> New-BizTalkHostInstance -Name TransmitHost -Credential (Get-Credential)
 .EXAMPLE
-    PS> New-BizTalkHostInstance -Name TransmitHost -Credential ([pscredential]::new('logon', (ConvertTo-SecureString password -AsPlainText -Force))) -Server 'server'
+    PS> New-BizTalkHostInstance -Name TransmitHost -Credential ([PSCredential]::new('logon', (ConvertTo-SecureString password -AsPlainText -Force))) -Server 'server'
 .EXAMPLE
-    PS> New-BizTalkHostInstance -Name TransmitHost -Credential (New-Object -TypeName pscredential -ArgumentList logon, (ConvertTo-SecureString password -AsPlainText -Force)) -Disabled -Started
+    PS> New-BizTalkHostInstance -Name TransmitHost -Credential (New-Object -TypeName PSCredential -ArgumentList logon, (ConvertTo-SecureString password -AsPlainText -Force)) -Disabled -Started
 .EXAMPLE
-    PS> New-BizTalkHostInstance -Name TransmitHost -Credential (New-Object pscredential logon, (ConvertTo-SecureString password -AsPlainText -Force)) -WhatIf
+    PS> New-BizTalkHostInstance -Name TransmitHost -Credential (New-Object PSCredential logon, (ConvertTo-SecureString password -AsPlainText -Force)) -WhatIf
 .LINK
     https://docs.microsoft.com/en-us/biztalk/core/technical-reference/mapping-and-installing-host-instances-using-wmi
 .LINK
@@ -354,20 +354,20 @@ function New-BizTalkHostInstance {
         [Parameter(Mandatory = $true)]
         [ArgumentCompleter( { Get-BizTalkHost | Select-Object -ExpandProperty Name } )]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( { Test-BizTalkHost -Name $_ })]
+        [ValidateScript( { Test-BizTalkHost -Name $_ } )]
         [string]
         $Name,
 
         [Parameter(Mandatory = $false)]
         [ArgumentCompleter( { Get-BizTalkServer | Select-Object -ExpandProperty Name } )]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( { Test-BizTalkServer -Name $_ })]
+        [ValidateScript( { Test-BizTalkServer -Name $_ } )]
         [string]
         $Server = $Env:COMPUTERNAME,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [pscredential]
+        [PSCredential]
         $Credential
     )
     DynamicParam {

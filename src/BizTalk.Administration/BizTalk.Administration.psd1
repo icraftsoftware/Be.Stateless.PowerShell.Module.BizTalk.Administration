@@ -31,7 +31,10 @@
         '.\bin\Microsoft.BizTalk.ExplorerOM.dll',
         '.\bin\Microsoft.BizTalk.Operations.dll'
     )
-    RequiredModules       = @('Exec', 'Psx')
+    RequiredModules       = @(
+        @{ ModuleName = 'Exec'; ModuleVersion = '1.0.21335.23673'; GUID = '83f4143a-79ee-49ee-a510-7770a0fc1644' }
+        @{ ModuleName = 'Psx'; ModuleVersion = '1.0.21284.43438'; GUID = '217de01f-f2e1-460a-99a4-b8895d0dd071' }
+    )
 
     AliasesToExport       = @()
     CmdletsToExport       = @()

@@ -22,8 +22,7 @@ Set-StrictMode -Version Latest
 .SYNOPSIS
    Asserts the existence of a Microsoft BizTalk Server Host Instance and whether it is in the expected state.
 .DESCRIPTION
-   This command will throw if the Microsoft BizTalk Server Host Instance does not exist, or is not in the expected
-   state, and will silently complete otherwise.
+   This command will throw if the Microsoft BizTalk Server Host Instance does not exist, or is not in the expected state, and will silently complete otherwise.
 .PARAMETER Name
    The name of the Microsoft BizTalk Server Host.
 .PARAMETER Server
@@ -139,8 +138,8 @@ function Assert-BizTalkHostInstance {
    PS> Disable-BizTalkHostInstance -Name TransmitHost, ReceiveHost
    Disables the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on all the servers.
 .EXAMPLE
-   PS> Disable-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Aritchaut, Aubergine
-   Disables the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Aritchaut
+   PS> Disable-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Artichaut, Aubergine
+   Disables the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Artichaut
    and Aubergine.
 .NOTES
    © 2022 be.stateless.
@@ -206,8 +205,8 @@ function Disable-BizTalkHostInstance {
    PS> Enable-BizTalkHostInstance -Name TransmitHost, ReceiveHost
    Enables the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on all the servers.
 .EXAMPLE
-   PS> Enable-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Aritchaut, Aubergine
-   Enables the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Aritchaut
+   PS> Enable-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Artichaut, Aubergine
+   Enables the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Artichaut
    and Aubergine.
 .NOTES
    © 2022 be.stateless.
@@ -271,17 +270,17 @@ function Enable-BizTalkHostInstance {
    Gets the Microsoft BizTalk Server Host Instances named BizTalkServerApplication and BizTalkServerIsolatedHost on
    all the servers.
 .EXAMPLE
-   PS> Get-BizTalkHostInstance -Server $Env:COMPUTERNAME
+   PS> Get-BizTalkHostInstance -Server $env:COMPUTERNAME
    Gets all the Microsoft BizTalk Server Host Instances on the local computer.
 .EXAMPLE
-   PS> Get-BizTalkHostInstance -Name BizTalkServerApplication -Server $Env:COMPUTERNAME
+   PS> Get-BizTalkHostInstance -Name BizTalkServerApplication -Server $env:COMPUTERNAME
    Gets the Microsoft BizTalk Server Host Instances named BizTalkServerApplication on the local computer.
 .EXAMPLE
-   PS> Get-BizTalkHostInstance -Name BizTalkServerApplication, BizTalkServerIsolatedHost -Server Aritchaut, Aubergine
+   PS> Get-BizTalkHostInstance -Name BizTalkServerApplication, BizTalkServerIsolatedHost -Server Artichaut, Aubergine
    Gets the Microsoft BizTalk Server Host Instances named BizTalkServerApplication and BizTalkServerIsolatedHost on
-   the servers Aritchaut and Aubergine.
+   the servers Artichaut and Aubergine.
 .EXAMPLE
-   PS> Get-BizTalkHostInstance -Name BizTalkServerApplication, BizTalkServerIsolatedHost -Server Aritchaut, Aubergine -WarningAction Stop
+   PS> Get-BizTalkHostInstance -Name BizTalkServerApplication, BizTalkServerIsolatedHost -Server Artichaut, Aubergine -WarningAction Stop
 .NOTES
    © 2022 be.stateless.
 #>
@@ -363,7 +362,7 @@ function New-BizTalkHostInstance {
       [ValidateNotNullOrEmpty()]
       [ValidateScript( { Test-BizTalkServer -Name $_ } )]
       [string]
-      $Server = $Env:COMPUTERNAME,
+      $Server = $env:COMPUTERNAME,
 
       [Parameter(Mandatory = $true)]
       [ValidateNotNullOrEmpty()]
@@ -372,10 +371,10 @@ function New-BizTalkHostInstance {
    )
    DynamicParam {
       if (Test-BizTalkHost -Name $Name -Type InProcess) {
-         $paramaterAttribute = New-Object System.Management.Automation.ParameterAttribute
-         $paramaterAttribute.Mandatory = $false
+         $parameterAttribute = New-Object System.Management.Automation.ParameterAttribute
+         $parameterAttribute.Mandatory = $false
          $attributeCollection = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
-         $attributeCollection.Add($paramaterAttribute)
+         $attributeCollection.Add($parameterAttribute)
          $disabledParameter = New-Object System.Management.Automation.RuntimeDefinedParameter('Disabled', [switch], $attributeCollection)
          $startedParameter = New-Object System.Management.Automation.RuntimeDefinedParameter('Started', [switch], $attributeCollection)
          $dynamicParameters = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
@@ -459,8 +458,8 @@ function New-BizTalkHostInstance {
    PS> Remove-BizTalkHostInstance -Name TransmitHost, ReceiveHost
    Removes the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on all the servers.
 .EXAMPLE
-   PS> Remove-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Aritchaut, Aubergine
-   Removes the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Aritchaut
+   PS> Remove-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Artichaut, Aubergine
+   Removes the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Artichaut
    and Aubergine.
 .LINK
    https://docs.microsoft.com/en-us/biztalk/core/technical-reference/uninstalling-and-un-mapping-a-host-instance-using-wmi
@@ -524,9 +523,8 @@ function Remove-BizTalkHostInstance {
 .SYNOPSIS
    Restarts a running Microsoft BizTalk Server Host Instance.
 .DESCRIPTION
-   Restarts a running Microsoft BizTalk Server Host Instance. Unless the -Force switch is passed, this command has no
-   effect if the Microsoft BizTalk Server Host Instance to restart is not already running. In other words, unless the
-   -Force switch is passed, this command will never start a Host Instance that is not running.
+   Restarts a running Microsoft BizTalk Server Host Instance. Unless the -Force switch is passed, this command has no effect if the Microsoft BizTalk Server Host
+   Instance to restart is not already running. In other words, unless the -Force switch is passed, this command will never start a Host Instance that is not running.
 .PARAMETER Name
    The name of the Microsoft BizTalk Server Host Instance to restart.
 .PARAMETER Server
@@ -548,8 +546,8 @@ function Remove-BizTalkHostInstance {
    PS> Restart-BizTalkHostInstance -Name TransmitHost, ReceiveHost
    Restarts the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on all the servers.
 .EXAMPLE
-   PS> Restart-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Aritchaut, Aubergine
-   Restarts the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Aritchaut
+   PS> Restart-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Artichaut, Aubergine
+   Restarts the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Artichaut
    and Aubergine.
 .LINK
    https://github.com/BTDF/DeploymentFramework/blob/master/src/btdf/Tools/BuildTasks/BizTalkDeploymentFramework.Tasks/ControlBizTalkHostInstance.cs
@@ -594,7 +592,7 @@ function Restart-BizTalkHostInstance {
             Write-Warning -Message ($hostInstanceMessages.Warn_Start_Disabled -f $instance.HostName, $instance.RunningServer)
          } elseif ($PsCmdlet.ShouldProcess($globalMessages.Should_Target, ($hostInstanceMessages.Should_Restart -f $instance.HostName, $instance.RunningServer))) {
             # https://docs.microsoft.com/en-us/biztalk/core/technical-reference/msbts-hostinstance-servicestate-property-wmi
-            if ($Force -or $instance.ServiceState -in @(2, 4) <# Sart Pending or Running #>) {
+            if ($Force -or $instance.ServiceState -in @(2, 4) <# Start Pending or Running #>) {
                Write-Information -MessageData ($hostInstanceMessages.Info_Restarting -f $instance.HostName, $instance.RunningServer)
                Invoke-CimMethod -ErrorAction Stop -InputObject $instance -MethodName Stop -Arguments @{ } -Confirm:$false | Out-Null
                Invoke-CimMethod -ErrorAction Stop -InputObject $instance -MethodName Start -Arguments @{ } -Confirm:$false | Out-Null
@@ -631,8 +629,8 @@ function Restart-BizTalkHostInstance {
    PS> Start-BizTalkHostInstance -Name TransmitHost, ReceiveHost
    Starts the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on all the servers.
 .EXAMPLE
-   PS> Start-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Aritchaut, Aubergine
-   Starts the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Aritchaut and
+   PS> Start-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Artichaut, Aubergine
+   Starts the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Artichaut and
    Aubergine.
 .LINK
    https://github.com/BTDF/DeploymentFramework/blob/master/src/btdf/Tools/BuildTasks/BizTalkDeploymentFramework.Tasks/ControlBizTalkHostInstance.cs
@@ -703,8 +701,8 @@ function Start-BizTalkHostInstance {
    PS> Stop-BizTalkHostInstance -Name TransmitHost, ReceiveHost
    Stops the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on all the servers.
 .EXAMPLE
-   PS> Stop-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Aritchaut, Aubergine
-   Stops the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Aritchaut and
+   PS> Stop-BizTalkHostInstance -Name TransmitHost, ReceiveHost -Server Artichaut, Aubergine
+   Stops the Microsoft BizTalk Server Host Instances named TransmitHost and ReceiveHost on the servers Artichaut and
    Aubergine.
 .LINK
    https://github.com/BTDF/DeploymentFramework/blob/master/src/btdf/Tools/BuildTasks/BizTalkDeploymentFramework.Tasks/ControlBizTalkHostInstance.cs
@@ -753,9 +751,8 @@ function Stop-BizTalkHostInstance {
 .SYNOPSIS
    Returns whether a Microsoft BizTalk Server Host Instance exists and whether it is disabled, started or stopped.
 .DESCRIPTION
-   This command will return $true if the Microsoft BizTalk Server Host Instance exists; $false otherwise. The
-   existence test can be combined with the expected state of the Microsoft BizTalk Server Host Instance, i.e. either
-   disabled, started or stopped.
+   This command will return $true if the Microsoft BizTalk Server Host Instance exists; $false otherwise. The existence test can be combined with the expected state of
+   the Microsoft BizTalk Server Host Instance, i.e. either disabled, started or stopped.
 .PARAMETER Name
    The name of the Microsoft BizTalk Server Host.
 .PARAMETER Server

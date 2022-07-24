@@ -18,6 +18,18 @@
 
 Set-StrictMode -Version Latest
 
+<#
+.SYNOPSIS
+   Gets the WMI object instance representing a logical grouping of Microsoft BizTalk Servers.
+.DESCRIPTION
+   Gets the WMI object instance representing a logical grouping of Microsoft BizTalk Servers.
+.EXAMPLE
+   PS> Get-BizTalkGroupSettings
+.LINK
+   https://docs.microsoft.com/en-us/biztalk/core/technical-reference/msbts-groupsetting-wmi
+.NOTES
+   © 2022 be.stateless.
+#>
 function Get-BizTalkGroupSettings {
    [CmdletBinding()]
    [OutputType([PSCustomObject])]
@@ -26,6 +38,18 @@ function Get-BizTalkGroupSettings {
    Get-CimInstance -Namespace root\MicrosoftBizTalkServer -ClassName MSBTS_GroupSetting
 }
 
+<#
+.SYNOPSIS
+   Gets the database name of the initial catalog part of the Microsoft BizTalk Management database connection string.
+.DESCRIPTION
+   Gets the database name of the initial catalog part of the Microsoft BizTalk Management database connection string.
+.EXAMPLE
+   PS> Get-BizTalkGroupMgmtDbName
+.LINK
+   https://docs.microsoft.com/en-us/biztalk/core/technical-reference/msbts-groupsetting-mgmtdbname-property-wmi
+.NOTES
+   © 2022 be.stateless.
+#>
 function Get-BizTalkGroupMgmtDbName {
    [CmdletBinding()]
    [OutputType([string])]
@@ -33,6 +57,18 @@ function Get-BizTalkGroupMgmtDbName {
    Get-CimInstance -Namespace root\MicrosoftBizTalkServer -ClassName MSBTS_GroupSetting | Select-Object -ExpandProperty MgmtDbName
 }
 
+<#
+.SYNOPSIS
+   Gets the data source part of the BizTalk Management database connect string.
+.DESCRIPTION
+   Gets the data source part of the BizTalk Management database connect string.
+.EXAMPLE
+   PS> Get-BizTalkGroupMgmtDBServer
+.LINK
+   https://docs.microsoft.com/en-us/biztalk/core/technical-reference/msbts-groupsetting-mgmtdbservername-property-wmi
+.NOTES
+   © 2022 be.stateless.
+#>
 function Get-BizTalkGroupMgmtDBServer {
    [CmdletBinding()]
    [OutputType([string])]

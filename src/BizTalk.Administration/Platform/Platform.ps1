@@ -22,6 +22,27 @@ using namespace System
 
 Set-StrictMode -Version Latest
 
+<#
+.SYNOPSIS
+   Gets a new instance of the Microsoft.BizTalk.ExplorerOM.BtsCatalogExplorer class.
+.DESCRIPTION
+   Gets a new instance of the Microsoft.BizTalk.ExplorerOM.BtsCatalogExplorer class. BtsCatalogExplorer is a disposable object and the instance returned is already
+   disposed of. The user must therefore pipes his commands to be able to use the BtsCatalogExplorer before it is disposed.
+.PARAMETER ManagementDatabaseServer
+   The name of the SQL server hosting the management database; it defaults to MSBTS_GroupSetting.MgmtDbServerName.
+.PARAMETER ManagementDatabaseName
+   The name of the management database; it defaults to MSBTS_GroupSetting.MgmtDbName.
+.OUTPUTS
+   An instance of the Microsoft.BizTalk.ExplorerOM.BtsCatalogExplorer class.
+.EXAMPLE
+   PS> Get-BizTalkCatalog
+.EXAMPLE
+   PS> Get-BizTalkCatalog | Where-Object { $_.Applications.Name -eq 'BizTalk EDI Application' } | ForEach-Object { $_.ReceivePorts.ReceiveLocations }
+.LINK
+   https://docs.microsoft.com/en-us/dotnet/api/microsoft.biztalk.explorerom.btscatalogexplorer
+.NOTES
+   © 2022 be.stateless.
+#>
 function Get-BizTalkCatalog {
    [CmdletBinding()]
    [OutputType([Microsoft.BizTalk.ExplorerOM.BtsCatalogExplorer])]
@@ -50,6 +71,29 @@ function Get-BizTalkCatalog {
    }
 }
 
+<#
+.SYNOPSIS
+   Gets a new instance of the Microsoft.BizTalk.Operations.BizTalkOperations class.
+.DESCRIPTION
+   Gets a new instance of the Microsoft.BizTalk.Operations.BizTalkOperations class. BizTalkOperations is a disposable object and the instance returned is already
+   disposed of. The user must therefore pipes his commands to be able to use the BizTalkOperations before it is disposed.
+.PARAMETER ManagementDatabaseServer
+   The name of the SQL server hosting the management database; it defaults to MSBTS_GroupSetting.MgmtDbServerName.
+.PARAMETER ManagementDatabaseName
+   The name of the management database; it defaults to MSBTS_GroupSetting.MgmtDbName.
+.OUTPUTS
+   An instance of the Microsoft.BizTalk.Operations.BizTalkOperations class.
+.EXAMPLE
+   PS> Get-BizTalkController
+.EXAMPLE
+   PS> Get-BizTalkController | ForEach-Object { $_.GetServiceInstances() }
+.EXAMPLE
+   PS> Get-BizTalkController | ForEach-Object { $_.GetMessages() }
+.LINK
+   https://docs.microsoft.com/en-us/dotnet/api/microsoft.biztalk.operations.biztalkoperations
+.NOTES
+   © 2022 be.stateless.
+#>
 function Get-BizTalkController {
    [CmdletBinding()]
    [OutputType([Microsoft.BizTalk.Operations.BizTalkOperations])]

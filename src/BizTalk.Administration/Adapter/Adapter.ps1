@@ -82,7 +82,7 @@ function Assert-BizTalkAdapter {
 .EXAMPLE
    PS> Get-BizTalkAdapter -Source Registry
 .EXAMPLE
-   PS> Get-BizTalkAdapter -Name FILE -Source Biztalk
+   PS> Get-BizTalkAdapter -Name FILE -Source BizTalk
 .EXAMPLE
    PS> Get-BizTalkAdapter -Name FILE -Source Combined
 .LINK

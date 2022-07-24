@@ -129,6 +129,27 @@ function Get-BizTalkApplication {
    }
 }
 
+<#
+.SYNOPSIS
+   Creates a new Microsoft BizTalk Server Application if it does not already exist.
+.DESCRIPTION
+   Creates a new Microsoft BizTalk Server Application if it does not already exist, as a Microsoft.BizTalk.ExplorerOM.Application object, along with its references to
+   other existing Microsoft BizTalk Server Applications.
+.PARAMETER Name
+   The name of the Microsoft BizTalk Server Application to create.
+.PARAMETER Description
+   The description of the Microsoft BizTalk Server Application to create.
+.PARAMETER Reference
+   The names of the other Microsoft BizTalk Server Applications that have to be referenced from the application to create.
+.OUTPUTS
+   Returns the newly created Microsoft BizTalk Server Application.
+.EXAMPLE
+   PS> New-BizTalkApplication -Name BizTalk.Factory
+.EXAMPLE
+   PS> New-BizTalkApplication -Name BizTalk.Factory -Description 'BizTalk.Factory''s batching application add-on.' -References BizTalk.Factory, BizTalk.System
+.NOTES
+   © 2022 be.stateless.
+#>
 function New-BizTalkApplication {
    [CmdletBinding(SupportsShouldProcess = $true)]
    [OutputType([Microsoft.BizTalk.ExplorerOM.Application])]
@@ -177,6 +198,18 @@ function New-BizTalkApplication {
    }
 }
 
+<#
+.SYNOPSIS
+   Deletes a Microsoft BizTalk Server Application if it does exists.
+.DESCRIPTION
+   Deletes a Microsoft BizTalk Server Application if it does exists.
+.PARAMETER Name
+   The name of the Microsoft BizTalk Server Application to delete.
+.EXAMPLE
+   PS> Remove-BizTalkApplication -Name BizTalk.Factory
+.NOTES
+   © 2022 be.stateless.
+#>
 function Remove-BizTalkApplication {
    [CmdletBinding(SupportsShouldProcess = $true)]
    [OutputType([void])]
@@ -196,6 +229,28 @@ function Remove-BizTalkApplication {
    }
 }
 
+<#
+.SYNOPSIS
+   Starts a Microsoft BizTalk Server Application.
+.DESCRIPTION
+   Starts the given artifacts of a Microsoft BizTalk Server Application.
+.PARAMETER Name
+   The name of the Microsoft BizTalk Server Application to start.
+.PARAMETER StartOptions
+   The set of artifacts to start, see https://docs.microsoft.com/en-us/dotnet/api/microsoft.biztalk.explorerom.applicationstartoption. It defaults to
+   StartAllOrchestrations, StartAllSendPorts, StartAllSendPortGroups, EnableAllReceiveLocations, DeployAllPolicies. It basically starts every application's
+   artifacts except the referenced applications.
+.PARAMETER ManagementDatabaseServer
+   The name of the SQL server hosting the management database; it defaults to MSBTS_GroupSetting.MgmtDbServerName.
+.PARAMETER ManagementDatabaseName
+   The name of the management database; it defaults to MSBTS_GroupSetting.MgmtDbName.
+.EXAMPLE
+   PS> Start-BizTalkApplication -Name BizTalk.Factory
+.EXAMPLE
+   PS> Start-BizTalkApplication -Name BizTalk.Factory -StartOptions StartAllOrchestrations, StartAllSendPorts
+.NOTES
+   © 2022 be.stateless.
+#>
 function Start-BizTalkApplication {
    [CmdletBinding()]
    [OutputType([void])]
@@ -238,6 +293,32 @@ function Start-BizTalkApplication {
    }
 }
 
+<#
+.SYNOPSIS
+   Stops a Microsoft BizTalk Server Application.
+.DESCRIPTION
+   Stops the given artifacts of a Microsoft BizTalk Server Application.
+.PARAMETER Name
+   The name of the Microsoft BizTalk Server Application to stop.
+.PARAMETER StopOptions
+   The set of artifacts to stop, see https://docs.microsoft.com/en-us/dotnet/api/microsoft.biztalk.explorerom.applicationstopoption. It defaults to
+   UnenlistAllOrchestrations, UnenlistAllSendPorts, UnenlistAllSendPortGroups, DisableAllReceiveLocations, UndeployAllPolicies. It basically stops every
+   application's artifacts except the referenced applications.
+.PARAMETER TerminateServiceInstances
+   Whether to terminate any running or suspended Microsoft BizTalk Server service instances related to the application.
+.PARAMETER ManagementDatabaseServer
+   The name of the SQL server hosting the management database; it defaults to MSBTS_GroupSetting.MgmtDbServerName.
+.PARAMETER ManagementDatabaseName
+   The name of the management database; it defaults to MSBTS_GroupSetting.MgmtDbName.
+.EXAMPLE
+   PS> Stop-BizTalkApplication -Name BizTalk.Factory
+.EXAMPLE
+   PS> Stop-BizTalkApplication -Name BizTalk.Factory -StopOptions UnenlistAllOrchestrations, UnenlistAllSendPorts, DisableAllReceiveLocations
+.EXAMPLE
+   PS> Stop-BizTalkApplication -Name BizTalk.Factory -StopOptions UnenlistAllOrchestrations, UnenlistAllSendPorts, DisableAllReceiveLocations -TerminateServiceInstances
+.NOTES
+   © 2022 be.stateless.
+#>
 function Stop-BizTalkApplication {
    [CmdletBinding()]
    [OutputType([void])]

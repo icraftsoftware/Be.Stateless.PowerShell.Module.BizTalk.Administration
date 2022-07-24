@@ -27,9 +27,8 @@ enum HostType {
 .SYNOPSIS
    Asserts the existence of a Microsoft BizTalk Server Host of a given type.
 .DESCRIPTION
-   This command will throw if the Microsoft BizTalk Server Host does not exist and will silently complete otherwise.
-   The asserted check can be narrowed down to a particular Type of Microsoft BizTalk Server Host, i.e. either
-   InProcess or Isolated.
+   This command will throw if the Microsoft BizTalk Server Host does not exist and will silently complete otherwise. The asserted check can be narrowed down to
+   a particular Type of Microsoft BizTalk Server Host, i.e. either InProcess or Isolated.
 .PARAMETER Name
    The name of the Microsoft BizTalk Server Host.
 .PARAMETER BizTalkHost
@@ -148,7 +147,7 @@ function Get-BizTalkHost {
 .PARAMETER Default
    Whether this host is to be the default host in the Microsoft BizTalk Server Group or not.
 .PARAMETER Tracking
-   Wheter to enable the Microsoft BizTalk Server Tracking component for this host or not.
+   Whether to enable the Microsoft BizTalk Server Tracking component for this host or not.
 .PARAMETER Trusted
    Whether Microsoft BizTalk Server should trust this host or not.
 .EXAMPLE
@@ -275,8 +274,8 @@ function Remove-BizTalkHost {
 .SYNOPSIS
    Returns whether a Microsoft BizTalk Server Host of a given type exists.
 .DESCRIPTION
-   This command will return $true if the Microsoft BizTalk Server Host exists; $false otherwise. The existence test
-   can be narrowed down to a particular Type of Microsoft BizTalk Server Host, i.e. either InProcess or Isolated.
+   This command will return $true if the Microsoft BizTalk Server Host exists; $false otherwise. The existence test can be narrowed down to a particular Type of
+   Microsoft BizTalk Server Host, i.e. either InProcess or Isolated.
 .PARAMETER Name
    The name of the Microsoft BizTalk Server Host.
 .PARAMETER BizTalkHost
@@ -342,7 +341,7 @@ function Test-BizTalkHost {
 .PARAMETER Default
    Whether this host is to be the default host in the Microsoft BizTalk Server group or not.
 .PARAMETER Tracking
-   Wheter to enable the Microsoft BizTalk Server Tracking component for this host or not.
+   Whether to enable the Microsoft BizTalk Server Tracking component for this host or not.
 .PARAMETER Trusted
    Whether Microsoft BizTalk Server should trust this host or not.
 .EXAMPLE

@@ -81,7 +81,7 @@ function Assert-BizTalkHandler {
 .EXAMPLE
    PS> Get-BizTalkHandler -Adapter FILE
 .EXAMPLE
-   PS> Get-BizTalkHandler -Host BiztAlkServerIsolatedHost
+   PS> Get-BizTalkHandler -Host BizTalkServerIsolatedHost
 .EXAMPLE
    PS> Get-BizTalkHandler -Direction Send
 .EXAMPLE
@@ -166,7 +166,7 @@ function New-BizTalkHandler {
       [Direction]
       $Direction,
 
-      # TODO refactor $Default as a Dynamic param which is only availble when $Direction = Send
+      # TODO refactor $Default as a Dynamic param which is only available when $Direction = Send
       [Parameter(Mandatory = $false)]
       [switch]
       $Default

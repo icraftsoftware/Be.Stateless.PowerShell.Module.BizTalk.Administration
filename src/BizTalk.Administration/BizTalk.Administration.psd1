@@ -33,6 +33,8 @@
    )
    RequiredModules       = @(
       @{ ModuleName = 'Exec' ; ModuleVersion = '2.1.0.0' ; GUID = '83f4143a-79ee-49ee-a510-7770a0fc1644' }
+      # comment out following dependency to workaround cyclic dependency issue, see https://github.com/PowerShell/PowerShell/issues/2607
+      #@{ ModuleName = 'Psx' ; ModuleVersion = '2.1.0.0' ; GUID = '217de01f-f2e1-460a-99a4-b8895d0dd071' }
    )
    AliasesToExport       = @()
    CmdletsToExport       = @()
@@ -91,10 +93,12 @@
    VariablesToExport     = @()
    PrivateData           = @{
       PSData = @{
-         Tags                       = @('be.stateless.be', 'icraftsoftware', 'BizTalk', 'Administration', 'Adapter', 'Application', 'Handler', 'Host', 'HostInstance')
+         Tags                       = @('be.stateless', 'icraftsoftware', 'BizTalk', 'Administration', 'Adapter', 'Application', 'Handler', 'Host', 'HostInstance')
          LicenseUri                 = 'https://github.com/icraftsoftware/Be.Stateless.PowerShell.Module.BizTalk.Administration/blob/master/LICENSE'
          ProjectUri                 = 'https://github.com/icraftsoftware/Be.Stateless.PowerShell.Module.BizTalk.Administration'
+         IconUri                    = 'https://github.com/icraftsoftware/Be.Stateless.Build.Scripts/raw/master/nuget.png'
          ExternalModuleDependencies = @('Exec', 'Psx')
+         Prerelease                 = 'preview'
       }
    }
 }

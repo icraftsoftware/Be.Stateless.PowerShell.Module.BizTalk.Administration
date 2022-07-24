@@ -42,28 +42,28 @@ Describe 'Assert-BizTalkHostInstance' {
             { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled:$false } | Should -Not -Throw
          }
          It 'Throws when the host instance should be disabled.' {
-            { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerApplication', $Env:COMPUTERNAME)
+            { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerApplication', $env:COMPUTERNAME)
          }
          It 'Does not throw when the host instance is started.' {
             { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsStarted } | Should -Not -Throw
          }
          It 'Throws when the host instance should not be started.' {
-            { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsStarted:$false } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerApplication', $Env:COMPUTERNAME)
+            { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsStarted:$false } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerApplication', $env:COMPUTERNAME)
          }
          It 'Does not throw when the host instance is not disabled and is started.' {
             { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled:$false -IsStarted } | Should -Not -Throw
          }
          It 'Throws when the host instance is started but should be disabled.' {
-            { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled -IsStarted } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerApplication', $Env:COMPUTERNAME)
+            { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled -IsStarted } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerApplication', $env:COMPUTERNAME)
          }
          It 'Throws when the host instance is not disabled but should not be started.' {
-            { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled:$false -IsStarted:$false } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerApplication', $Env:COMPUTERNAME)
+            { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsDisabled:$false -IsStarted:$false } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerApplication', $env:COMPUTERNAME)
          }
          It 'Does not throw when the host instance is not stopped.' {
             { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsStopped:$false } | Should -Not -Throw
          }
          It 'Throws when the host instance should be stopped.' {
-            { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsStopped } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerApplication', $Env:COMPUTERNAME)
+            { Assert-BizTalkHostInstance -Name BizTalkServerApplication -IsStopped } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerApplication', $env:COMPUTERNAME)
          }
       }
 
@@ -72,34 +72,34 @@ Describe 'Assert-BizTalkHostInstance' {
             { Assert-BizTalkHostInstance -Name Test_Host_1 -IsDisabled } | Should -Not -Throw
          }
          It 'Throws when the host instance should not be disabled.' {
-            { Assert-BizTalkHostInstance -Name Test_Host_1 -IsDisabled:$false } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'Test_Host_1', $Env:COMPUTERNAME)
+            { Assert-BizTalkHostInstance -Name Test_Host_1 -IsDisabled:$false } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'Test_Host_1', $env:COMPUTERNAME)
          }
          It 'Does not throw when the host instance is not started.' {
             { Assert-BizTalkHostInstance -Name Test_Host_1 -IsStarted:$false } | Should -Not -Throw
          }
          It 'Throws when the host instance should be started.' {
-            { Assert-BizTalkHostInstance -Name Test_Host_1 -IsStarted } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'Test_Host_1', $Env:COMPUTERNAME)
+            { Assert-BizTalkHostInstance -Name Test_Host_1 -IsStarted } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'Test_Host_1', $env:COMPUTERNAME)
          }
          It 'Does not throw when the host instance is stopped.' {
             { Assert-BizTalkHostInstance -Name Test_Host_1 -IsStopped } | Should -Not -Throw
          }
          It 'Throws when the host instance should not be stopped.' {
-            { Assert-BizTalkHostInstance -Name Test_Host_1 -IsStopped:$false } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'Test_Host_1', $Env:COMPUTERNAME)
+            { Assert-BizTalkHostInstance -Name Test_Host_1 -IsStopped:$false } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'Test_Host_1', $env:COMPUTERNAME)
          }
          It 'Does not throw when the host instance is disabled and is stopped.' {
             { Assert-BizTalkHostInstance -Name Test_Host_1 -IsDisabled -IsStopped } | Should -Not -Throw
          }
          It 'Throws when the host instance is stopped but should be disabled.' {
-            { Assert-BizTalkHostInstance -Name Test_Host_1 -IsDisabled:$false -IsStopped } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'Test_Host_1', $Env:COMPUTERNAME)
+            { Assert-BizTalkHostInstance -Name Test_Host_1 -IsDisabled:$false -IsStopped } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'Test_Host_1', $env:COMPUTERNAME)
          }
          It 'Throws when the host instance is disabled but should not be stopped.' {
-            { Assert-BizTalkHostInstance -Name Test_Host_1 -IsDisabled -IsStopped:$false } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'Test_Host_1', $Env:COMPUTERNAME)
+            { Assert-BizTalkHostInstance -Name Test_Host_1 -IsDisabled -IsStopped:$false } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'Test_Host_1', $env:COMPUTERNAME)
          }
       }
 
       Context 'Asserting BizTalk Server Host Instances from the pipeline' {
          It 'Throws when the host instance is not in the expected state.' {
-            { 'BizTalkServerApplication', 'BizTalkServerIsolatedHost' | Get-BizTalkHostInstance | Assert-BizTalkHostInstance -IsStarted } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerIsolatedHost', $Env:COMPUTERNAME)
+            { 'BizTalkServerApplication', 'BizTalkServerIsolatedHost' | Get-BizTalkHostInstance | Assert-BizTalkHostInstance -IsStarted } | Should -Throw -ExpectedMessage ($hostInstanceMessages.Error_State -f 'BizTalkServerIsolatedHost', $env:COMPUTERNAME)
          }
       }
 
